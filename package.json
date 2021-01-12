@@ -2,6 +2,7 @@
   "name": "esrun",
   "version": "1.0.0",
   "description": "Execute directly your Typescript/Javascript(with ES modules) files using Esbuild",
+  "files": ["src/**/*"],
   "main": "src/main.js",
   "bin": {
     "esrun": "src/bin.js"
