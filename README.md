@@ -3,7 +3,7 @@ Execute your Typescript or modern Javascript files without having to use a bundl
 
 This library is a thin wrapper around [esbuild](https://github.com/evanw/esbuild) which compiles Typescript almost instantly.
 
-# Usage
+## Usage
 
 Install the library globally or locally with your favorite package manager.
 
@@ -25,7 +25,7 @@ esrun foo.ts --option=bar
 
 The file dependencies will be bundled and executed as well.
 
-# API
+## API
 
 The library exports a single function that you can use to programmatically execute a Typescript file.
 
