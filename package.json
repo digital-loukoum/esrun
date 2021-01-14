@@ -1,5 +1,5 @@
 {
-  "name": "esrun",
+  "name": "@digitak/esrun",
   "version": "1.0.0",
   "description": "Execute directly your Typescript/Javascript(with ES modules) files using Esbuild",
   "files": ["src/**/*"],
