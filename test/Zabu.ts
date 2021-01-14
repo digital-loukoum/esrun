@@ -1,5 +1,5 @@
 export default class Zabu {
 	yell() {
-		console.log("ZABUUUuuuuUuUuUuU!")
+		console.log('"ZABUUUuuuuUuUuUuU!"')
 	}
 }

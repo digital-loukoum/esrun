@@ -27,9 +27,7 @@
   },
   "homepage": "https://github.com/digital-loukoum/esrun#readme",
   "dependencies": {
-    "esbuild": "^0.8.31",
-    "tmp": "^0.2.1",
-    "tmp-promise": "^3.0.2"
+    "esbuild": "^0.8.31"
   },
   "devDependencies": {
     "@types/node": "^14.14.20"
