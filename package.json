@@ -1,6 +1,6 @@
 {
   "name": "@digitak/esrun",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Execute directly your Typescript/Javascript(with ES modules) files using Esbuild",
   "files": ["src/**/*"],
   "main": "src/main.js",
@@ -8,8 +8,7 @@
     "esrun": "src/bin.js"
   },
   "scripts": {
-    "test": "./src/bin.js test/test.ts",
-    "publish": "npm publish --access public"
+    "test": "./src/bin.js test"
   },
   "repository": {
     "type": "git",
