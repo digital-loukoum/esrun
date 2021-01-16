@@ -5,7 +5,8 @@
   "files": ["src/**/*"],
   "main": "src/main.js",
   "bin": {
-    "esrun": "src/bin.js"
+    "esrun": "src/bin.js",
+    "esr": "src/bin.js"
   },
   "scripts": {
     "test": "./src/bin.js test"
