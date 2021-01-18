@@ -13,16 +13,14 @@ npm i -D @digitak/esrun
 
 Then you can execute any Typescript file in the same way Node would execute a Javascript file.
 
-```py
+```
 esrun foo.ts
-# or use shortened form :
-esr foo.ts
 ```
 
-You can pass arguments to the process :
+You can pass arguments like any process :
 
 ```
-esrun foo.ts --option=bar
+esrun foo.ts --option=bar --verbose -S
 ```
 
 All file dependencies will be bundled and executed as well.
@@ -45,5 +43,5 @@ The library exports a single function that you can use to programmatically execu
 ``` ts
 import esrun from '@digitak/esrun'
 
-esrun(filePath: string, arguments: string[]): unknown
+esrun(filePath: string, argv: string[]): unknown
 ```
