@@ -58,7 +58,9 @@ async function esrun(inputFile, args=[]) {
 			bundle: true,
 			write: false,
 			platform: 'node',
-			'external:fsevents': true,
+			external: [
+				'fsevents',
+			],
 		})
 		const code = buildResult.outputFiles[0].text
 		const evaluator = new Function('process', 'require', code)
