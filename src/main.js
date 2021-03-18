@@ -39,7 +39,7 @@ function findInputFile(path) {
 			resolve(path, 'main.js'),
 		]) if (existsSync(subpath) && statSync(subpath).isFile())
 			return subpath
-		
+
 		throw `Could not resolve an entry point in folder '${path}`
 	}
 	else throw `Path '${path}' should be a file or a directory`
@@ -58,11 +58,12 @@ async function esrun(inputFile, args=[]) {
 			bundle: true,
 			write: false,
 			platform: 'node',
+			'external:fsevents': true,
 		})
 		const code = buildResult.outputFiles[0].text
 		const evaluator = new Function('process', 'require', code)
 		process.argv = [process.argv[0], inputFile, ...args]
-	
+
 		return evaluator(process, require)
 	}
 	catch (error) {
