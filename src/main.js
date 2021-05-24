@@ -1,7 +1,12 @@
-import { resolve, basename } from "path"
+import { relative, resolve, basename } from "path"
 import esbuild from "esbuild"
 import { existsSync, statSync, readFileSync } from "fs"
 import { spawnSync } from "child_process"
+import addJsExtensions from "@digitak/grubber/library/utilities/addJsExtensions.js"
+import { createRequire } from "module"
+
+const require = createRequire(process.cwd())
+const nodeResolve = dependency => require.resolve(dependency, { paths: [process.cwd()] })
 
 const { build } = esbuild
 
@@ -35,12 +40,15 @@ export default async function esrun(inputFile, args = []) {
 
 		const code = buildResult.outputFiles[0].text
 
+		// we replace all dependencies by their exact file URL with the '.js' extension
+		const patchedCode = addJsExtensions(code, nodeResolve)
+
 		const { status } = spawnSync(
 			"node",
 			[
 				"--input-type=module",
 				"--eval",
-				code.replace(/'/g, "\\'"),
+				patchedCode.replace(/'/g, "\\'"),
 				"--",
 				inputFile,
 				...args,

@@ -2,6 +2,7 @@ import Zabu from "./Zabu"
 import ts from "typescript"
 import fsevents from "fsevents"
 import { bunker } from "@digitak/bunker"
+import { bunkerFile } from "@digitak/bunker/library/io"
 import start from "fartest"
 import print from "cute-print"
 
@@ -20,6 +21,9 @@ start(async ({ stage, same }) => {
 
 	stage("Import ESM library")
 	same(bunker(3), Uint8Array.of(5, 3))
+
+	stage("Import specific file in library")
+	same(typeof bunkerFile, "function")
 
 	stage("Import custom typescript file")
 	same(new Zabu().yell(), "ZABU")
