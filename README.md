@@ -3,22 +3,22 @@
 
 This library is a thin wrapper around [esbuild](https://github.com/evanw/esbuild) which compiles Typescript almost instantly.
 
-The harder work to run typescript is to deal with dependencies ; you may need to import other typescript files, but also libraries written in Javascript, and using either the CJS or the ESM format.
+The harder work to run typescript is to deal with dependencies. For example, you may need to import other Typescript files, but also libraries written in Javascript and using either the CJS or the ESM format. All these use cases should be considered.
 
-**esrun** is able to handle all these use cases and make things work as you would expect.
+**esrun** is able to handle all the annoying stuff and make things work as you would expect.
 
 ## Usage
 
 ### Global installation
 
-Install the library globally with your favorite package manager.
+Install the library globally with your favorite package manager:
 
 
 ```shell
 npm i -g @digitak/esrun
 ```
 
-Then you can execute any Typescript file in the same way Node would execute a Javascript file.
+Then you can execute any Typescript file in the same way Node would execute a Javascript file:
 
 ```shell
 esrun foo.ts
@@ -31,6 +31,8 @@ esrun foo.ts --option=bar --verbose -S
 ```
 
 All file dependencies will be bundled and executed as well.
+
+External module dependencies won't be bundled, it's up to the `node` engine to resolve dependencies.
 
 
 ### Local installation
@@ -51,7 +53,7 @@ Then you can use it in your `package.json` scripts:
 }
 ```
 
-Running `npm run test` will run the first file found in the following list:
+Running `npm run test` will run the first file that exists in the following list:
 
 - `/test.ts`
 - `/test/index.ts`
