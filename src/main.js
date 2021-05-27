@@ -1,9 +1,10 @@
-import { relative, resolve, basename } from "path"
+import { relative, resolve, basename, join } from "path"
 import esbuild from "esbuild"
 import { existsSync, statSync, readFileSync } from "fs"
 import { spawnSync } from "child_process"
 import addJsExtensions from "@digitak/grubber/library/utilities/addJsExtensions.js"
 import { createRequire } from "module"
+import chokidar from "chokidar"
 
 const require = createRequire(process.cwd())
 const nodeResolve = dependency => require.resolve(dependency, { paths: [process.cwd()] })
@@ -18,46 +19,75 @@ export default async function esrun(inputFile, args = []) {
 		if (!inputFile) throw `Missing input file`
 		inputFile = findInputFile(resolve(inputFile))
 
+		const watch = args[0] == "--watch" || args[0] == "-w"
+		if (watch) args.shift()
+
+		// list of all modules bundled
+		const dependencies = []
+
 		const buildResult = await build({
 			entryPoints: [inputFile],
 			bundle: true,
 			write: false,
 			platform: "node",
 			format: "esm",
+			incremental: watch,
 			plugins: [
 				{
 					name: "make-all-packages-external",
 					setup(build) {
-						let filter = /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/ // Must not start with "/" or "./" or "../"
-						build.onResolve({ filter }, args => ({
-							path: args.path,
-							external: true,
-						}))
+						const filter = /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/ // Must not start with "/" or "./" or "../"
+						build.onResolve({ filter }, args => {
+							return {
+								path: args.path,
+								external: true,
+							}
+						})
+					},
+				},
+				{
+					name: "list-dependencies",
+					setup(build) {
+						build.onLoad({ filter: /.*/ }, ({ path }) => {
+							dependencies.push(path)
+						})
 					},
 				},
 			],
 		})
 
-		const code = buildResult.outputFiles[0].text
+		const executeBuild = () => {
+			const code = addJsExtensions(buildResult.outputFiles[0].text, nodeResolve)
+			const { status } = spawnSync(
+				"node",
+				[
+					"--input-type=module",
+					"--eval",
+					code.replace(/'/g, "\\'"),
+					"--",
+					inputFile,
+					...args,
+				],
+				{
+					stdio: "inherit",
+				}
+			)
+			return status
+		}
 
-		// we replace all dependencies by their exact file URL with the '.js' extension
-		const patchedCode = addJsExtensions(code, nodeResolve)
-
-		const { status } = spawnSync(
-			"node",
-			[
-				"--input-type=module",
-				"--eval",
-				patchedCode.replace(/'/g, "\\'"),
-				"--",
-				inputFile,
-				...args,
-			],
-			{
-				stdio: "inherit",
-			}
-		)
-		process.exit(status)
+		if (watch) {
+			console.clear()
+			executeBuild()
+			const watcher = chokidar.watch(dependencies)
+			watcher.on("change", path => {
+				console.clear()
+				console.log("change", path)
+				buildResult.rebuild()
+				executeBuild()
+			})
+		} else {
+			process.exit(executeBuild())
+		}
 	} catch (error) {
 		console.error(error)
 		process.exit(1)
