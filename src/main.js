@@ -12,13 +12,10 @@ const nodeResolve = dependency => require.resolve(dependency, { paths: [process.
 /**
  * Run any .ts or .js file
  */
-export default async function esrun(inputFile, args = []) {
+export default async function esrun(inputFile, args = [], watch = false) {
 	try {
 		if (!inputFile) throw `Missing input file`
 		inputFile = findInputFile(resolve(inputFile))
-
-		const watch = args[0] == "--watch" || args[0] == "-w"
-		if (watch) args.shift()
 
 		// list of all modules bundled
 		const dependencies = []

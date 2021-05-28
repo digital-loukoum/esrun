@@ -9,7 +9,10 @@ import print from "cute-print"
 
 start(async ({ stage, same }) => {
 	stage("CLI arguments received")
-	same(process.argv[2], "coco")
+	same(process.argv[3], "coco")
+
+	stage("CLI arguments received [--watch is passed as argument]")
+	same(process.argv[2], "--watch")
 
 	stage("Import typescript library")
 	same(ts.SyntaxKind.EndOfFileToken, 1)

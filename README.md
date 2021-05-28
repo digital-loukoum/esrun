@@ -65,9 +65,25 @@ Running `npm run test` will run the first file that exists in the following list
 - `/test/main.js`
 
 
+### Watch mode
+
+You can also execute **esrun** in watch mode.
+
+In watch mode, your file will automatically be re-executed every time itself or one of its dependencies is updated.
+
+```shell
+esrun --watch foo.ts
+```
+
+> The `--watch` (or `-w`) option must be placed before the path of the file to execute.
+If you place it after the file path, it will be passed as an argument to `foo.ts` instead.
+
+This feature is very useful when you are doing test-driven development. You can just run `esrun --watch test.ts` and enjoy a live output of your changes right into your console.
+
+
 ### Importing a CJS module
 
-If you import a CJS module, you may need to set the [esModuleInterop](https://www.typescriptlang.org/tsconfig#esModuleInterop) flag in your `tsconfig.json` file:
+If you import a CJS module (like the `typescript` library itself), it's likely that you will need to set the [esModuleInterop](https://www.typescriptlang.org/tsconfig#esModuleInterop) flag in your `tsconfig.json` file:
 
 ```json
 {
@@ -77,7 +93,7 @@ If you import a CJS module, you may need to set the [esModuleInterop](https://ww
 }
 ```
 
-This will allow you to write `import ts from "typescript"` instead of `import * as ts from "typescript"` - the latest syntax being not standard ESM.
+This will suppress the import errors from the Typescript compiler and allow you to write `import ts from "typescript"` instead of `import * as ts from "typescript"` - the latest syntax being not standard ESM.
 
 
 ### Using a directory as an entry point
@@ -99,5 +115,5 @@ The library exports a single function that you can use to programmatically execu
 ``` ts
 import esrun from '@digitak/esrun'
 
-esrun(filePath: string, argv: string[]): unknown
+esrun(filePath: string, argv: string[], watch = false): unknown
 ```
