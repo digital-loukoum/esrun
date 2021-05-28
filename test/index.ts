@@ -1,4 +1,5 @@
 import Zabu from "./Zabu"
+import coco from "./coco"
 import ts from "typescript"
 import fsevents from "fsevents"
 import { bunker } from "@digitak/bunker"
@@ -27,4 +28,7 @@ start(async ({ stage, same }) => {
 
 	stage("Import custom typescript file")
 	same(new Zabu().yell(), "ZABU")
+
+	stage("Import another custom typescript file")
+	same(coco, 13)
 })

@@ -9,8 +9,6 @@ import chokidar from "chokidar"
 const require = createRequire(process.cwd())
 const nodeResolve = dependency => require.resolve(dependency, { paths: [process.cwd()] })
 
-const { build } = esbuild
-
 /**
  * Run any .ts or .js file
  */
@@ -24,68 +22,112 @@ export default async function esrun(inputFile, args = []) {
 
 		// list of all modules bundled
 		const dependencies = []
+		let buildResult = null
+		let buildSucceeded = false
 
-		const buildResult = await build({
-			entryPoints: [inputFile],
-			bundle: true,
-			write: false,
-			platform: "node",
-			format: "esm",
-			incremental: watch,
-			plugins: [
-				{
-					name: "make-all-packages-external",
-					setup(build) {
-						const filter = /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/ // Must not start with "/" or "./" or "../"
-						build.onResolve({ filter }, args => {
-							return {
-								path: args.path,
-								external: true,
-							}
-						})
-					},
-				},
-				{
-					name: "list-dependencies",
-					setup(build) {
-						build.onLoad({ filter: /.*/ }, ({ path }) => {
-							dependencies.push(path)
-						})
-					},
-				},
-			],
-		})
+		const build = async () => {
+			try {
+				buildResult = await esbuild.build({
+					entryPoints: [inputFile],
+					bundle: true,
+					write: false,
+					platform: "node",
+					format: "esm",
+					incremental: watch,
+					plugins: [
+						{
+							name: "make-all-packages-external",
+							setup(build) {
+								const filter = /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/ // Must not start with "/" or "./" or "../"
+								build.onResolve({ filter }, args => {
+									return {
+										path: args.path,
+										external: true,
+									}
+								})
+							},
+						},
+						{
+							name: "list-dependencies",
+							setup(build) {
+								build.onLoad({ filter: /.*/ }, ({ path }) => {
+									dependencies.push(path)
+								})
+							},
+						},
+					],
+				})
+				buildSucceeded = true
+			} catch (error) {
+				buildResult = null
+				buildSucceeded = false
+			}
+		}
 
 		const executeBuild = () => {
+			if (!buildSucceeded) return 1
 			const code = addJsExtensions(buildResult.outputFiles[0].text, nodeResolve)
-			const { status } = spawnSync(
-				"node",
-				[
-					"--input-type=module",
-					"--eval",
-					code.replace(/'/g, "\\'"),
-					"--",
-					inputFile,
-					...args,
-				],
-				{
-					stdio: "inherit",
-				}
-			)
-			return status
+			try {
+				const { status } = spawnSync(
+					"node",
+					[
+						"--input-type=module",
+						"--eval",
+						code.replace(/'/g, "\\'"),
+						"--",
+						inputFile,
+						...args,
+					],
+					{
+						stdio: "inherit",
+					}
+				)
+				return status
+			} catch (error) {
+				return 1
+			}
 		}
 
 		if (watch) {
 			console.clear()
+			await build()
 			executeBuild()
-			const watcher = chokidar.watch(dependencies)
-			watcher.on("change", path => {
+			const watcher = chokidar.watch([...dependencies, "package.json"])
+
+			const rebuild = async path => {
 				console.clear()
-				console.log("change", path)
-				buildResult.rebuild()
+				dependencies.length = 0
+				if (buildSucceeded) {
+					try {
+						buildResult = await buildResult.rebuild()
+					} catch (error) {
+						buildResult = null
+						buildSucceeded = false
+					}
+				} else await build()
+
 				executeBuild()
-			})
+
+				// we update the list of watched files
+				if (buildSucceeded) {
+					const watchedDependencies = []
+					for (const [directory, files] of Object.entries(watcher.getWatched())) {
+						watchedDependencies.push(...files.map(file => join(directory, file)))
+					}
+
+					for (const dependency of watchedDependencies)
+						if (dependency != "package.json" && !dependencies.includes(dependency))
+							watcher.unwatch(dependency)
+
+					for (const dependency of dependencies)
+						if (!watchedDependencies.includes(dependency)) watcher.add(dependency)
+				}
+			}
+
+			watcher.on("change", rebuild)
+			watcher.on("unlink", rebuild)
 		} else {
+			await build()
 			process.exit(executeBuild())
 		}
 	} catch (error) {
