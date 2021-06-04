@@ -8,11 +8,17 @@ import chokidar from "chokidar"
 
 const require = createRequire(process.cwd())
 const nodeResolve = dependency => require.resolve(dependency, { paths: [process.cwd()] })
+const IDLE_PROCESS_TIMEOUT = 3_600_000 // 1-hour
 
 /**
  * Run any .ts or .js file
  */
-export default async function esrun(inputFile, args = [], watch = false) {
+export default async function esrun(
+	inputFile,
+	args = [],
+	watch = false,
+	inspect = false
+) {
 	try {
 		if (!inputFile) throw `Missing input file`
 		inputFile = findInputFile(resolve(inputFile))
@@ -63,22 +69,26 @@ export default async function esrun(inputFile, args = [], watch = false) {
 
 		const executeBuild = () => {
 			if (!buildSucceeded) return 1
-			const code = addJsExtensions(buildResult.outputFiles[0].text, nodeResolve)
+			let code = addJsExtensions(buildResult.outputFiles[0].text, nodeResolve)
+			if (inspect) {
+				code += `\n\n;setTimeout(() => console.log("Stopping idle process"), ${IDLE_PROCESS_TIMEOUT})\n`
+			}
+
+			const commandArgs = []
+			if (inspect) commandArgs.push("--inspect")
+			commandArgs.push(
+				"--input-type=module",
+				"--eval",
+				code.replace(/'/g, "\\'"),
+				"--",
+				inputFile,
+				...args
+			)
+
 			try {
-				const { status } = spawnSync(
-					"node",
-					[
-						"--input-type=module",
-						"--eval",
-						code.replace(/'/g, "\\'"),
-						"--",
-						inputFile,
-						...args,
-					],
-					{
-						stdio: "inherit",
-					}
-				)
+				const { status } = spawnSync("node", commandArgs, {
+					stdio: "inherit",
+				})
 				return status
 			} catch (error) {
 				return 1

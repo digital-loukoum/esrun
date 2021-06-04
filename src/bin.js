@@ -1,7 +1,29 @@
 #!/usr/bin/env node
 import esrun from "./main.js"
 
-const watch = process.argv[2] == "--watch" || process.argv[2] == "-w"
-const argsOffset = watch ? 3 : 2
+const { argv } = process
 
-esrun(process.argv[argsOffset], process.argv.slice(argsOffset + 1), watch)
+const possibleOptions = {
+	watch: ["--watch", "-w"],
+	inspect: ["--inspect", "-i"],
+}
+
+const options = {
+	watch: false,
+	inspect: false,
+}
+
+let argsOffset = 2
+
+parseArgument: while (argv[argsOffset]) {
+	for (const option in possibleOptions) {
+		if (possibleOptions[option].includes(argv[argsOffset])) {
+			options[option] = true
+			argsOffset++
+			continue parseArgument
+		}
+	}
+	break
+}
+
+esrun(argv[argsOffset], argv.slice(argsOffset + 1), options.watch, options.inspect)
