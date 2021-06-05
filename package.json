@@ -4,14 +4,18 @@
 	"type": "module",
 	"description": "Execute directly your Typescript files using Esbuild",
 	"files": [
-		"src/**/*"
+		"library/**/*"
 	],
-	"main": "src/main.js",
+	"main": "library/main.js",
 	"bin": {
-		"esrun": "src/bin.js"
+		"esrun": "library/bin.js"
 	},
 	"scripts": {
-		"test": "./src/bin.js --watch test --watch coco"
+		"check": "tsc --noEmit",
+		"build": "node scripts/build.js",
+		"test:run": "./library/bin.js test --watch coco",
+		"test:watch": "./library/bin.js --watch test --watch coco",
+		"test:inspect": "./library/bin.js --inspect test --watch coco"
 	},
 	"engines": {
 		"node": ">=14.0"
@@ -43,6 +47,6 @@
 		"cute-print": "^1.0.4",
 		"fartest": "^2.1.6",
 		"fsevents": "^2.3.2",
-		"typescript": "^4.2.4"
+		"typescript": "^4.3.2"
 	}
 }
