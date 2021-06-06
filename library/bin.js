@@ -1,16 +1,27 @@
 #!/usr/bin/env node
 import esrun from "./main.js";
 const { argv } = process;
-const options = {
+const argumentOptions = {
     "--watch": "watch",
     "-w": "watch",
     "--inspect": "inspect",
     "-i": "inspect",
 };
-let mode = "default";
+const options = {
+    watch: false,
+    inspect: false,
+};
 let argsOffset = 2;
-if (argv[argsOffset] in options) {
-    mode = options[argv[argsOffset]];
-    argsOffset++;
+let argument;
+while ((argument = argv[argsOffset]).startsWith("-")) {
+    if (argument in argumentOptions) {
+        options[argumentOptions[argument]] = true;
+        argsOffset++;
+    }
+    else {
+        console.log(`Unknown option ${argv[argsOffset]}`);
+        process.exit(9);
+    }
 }
-esrun(argv[argsOffset], argv.slice(argsOffset + 1), mode);
+console.log("Options:", options);
+esrun(argv[argsOffset], argv.slice(argsOffset + 1), options.watch, options.inspect);

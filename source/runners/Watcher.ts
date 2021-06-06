@@ -1,15 +1,12 @@
 import Runner, { Output } from "./Runner"
-import type { Mode } from "../Mode"
 import { watch } from "chokidar"
 import type { FSWatcher } from "chokidar"
 import path from "path"
 
 export default class Watcher extends Runner {
 	protected watcher: FSWatcher | null = null
-
-	get mode(): Mode {
-		return "watch"
-	}
+	protected readonly watch = true
+	protected readonly inspect = false
 
 	async run() {
 		try {
@@ -23,7 +20,6 @@ export default class Watcher extends Runner {
 	}
 
 	async rerun() {
-		console.log("RERUN")
 		if (!this.watcher) throw `Cannot re-run before a first run`
 		const { watcher } = this
 

@@ -5,9 +5,8 @@ export default class Watcher extends Runner {
     constructor() {
         super(...arguments);
         this.watcher = null;
-    }
-    get mode() {
-        return "watch";
+        this.watch = true;
+        this.inspect = false;
     }
     async run() {
         try {
@@ -21,7 +20,6 @@ export default class Watcher extends Runner {
         catch (error) { }
     }
     async rerun() {
-        console.log("RERUN");
         if (!this.watcher)
             throw `Cannot re-run before a first run`;
         const { watcher } = this;

@@ -1,45 +1,59 @@
-import { existsSync, statSync, readFileSync } from "fs";
-import { resolve, basename } from "path";
 import { build } from "esbuild/lib/main.js";
 import addJsExtensions from "@digitak/grubber/library/utilities/addJsExtensions.js";
 import resolveDependency from "../resolveDependency.js";
-import { spawnSync } from "child_process";
+import { spawn } from "child_process";
+import findInputFile from "../tools/findInputFile.js";
+// import path from "path"
+// import { fileURLToPath } from "url"
+import inspector from "inspector";
 export default class Runner {
-    constructor(input, args = []) {
+    constructor(input, args = [], inspect = false) {
         this.args = args;
+        this.inspect = inspect;
         this.output = null;
         this.dependencies = [];
-        this.input = this.findInputFile(input);
-    }
-    get mode() {
-        return "default";
+        this.watch = false;
+        this.input = findInputFile(input);
     }
     get outputCode() {
         return this.output?.outputFiles[0]?.text || "";
     }
     async run() {
         try {
+            if (this.inspect)
+                this.runInspector();
+            console.log("Inspect?", this.inspect);
             await this.build();
-            process.exit(this.execute());
+            process.exit(await this.execute());
         }
         catch (error) {
             console.error(error);
             process.exit(1);
         }
     }
-    execute() {
+    async execute() {
         if (!this.output)
             return 1;
         let code = addJsExtensions(this.outputCode, resolveDependency);
         const commandArgs = [];
-        if (this.mode == "inspect")
-            commandArgs.push("--inspect");
+        if (this.inspect) {
+            code = `import { console } from "inspector";\n` + code;
+        }
         commandArgs.push("--input-type=module", "--eval", code.replace(/'/g, "\\'"), "--", this.input, ...this.args);
         try {
-            const { status } = spawnSync("node", commandArgs, {
-                stdio: "inherit",
+            console.log("Spawning...");
+            const child = spawn("node", commandArgs, {
+            // stdio: [inspector.console],
             });
-            return status || 0;
+            child.stdout?.on("data", data => console.log(data.toString()));
+            child.stderr?.on("data", data => console.error(data.toString()));
+            return new Promise(resolve => {
+                child.on("close", code => resolve(code || 0));
+                child.on("error", error => {
+                    console.error(error);
+                    return resolve(1);
+                });
+            });
         }
         catch (error) {
             return 1;
@@ -53,7 +67,7 @@ export default class Runner {
                 write: false,
                 platform: "node",
                 format: "esm",
-                incremental: this.mode != "default",
+                incremental: this.watch,
                 plugins: [
                     {
                         name: "make-all-packages-external",
@@ -83,42 +97,19 @@ export default class Runner {
             this.output = null;
         }
     }
-    findInputFile(path) {
-        if (!existsSync(path)) {
-            if (existsSync(`${path}.ts`))
-                path = `${path}.ts`;
-            else if (existsSync(`${path}.js`))
-                path = `${path}.js`;
-            else
-                throw `Path '${path}' does not exist`;
-        }
-        const stat = statSync(path);
-        if (stat.isFile())
-            return path;
-        else if (stat.isDirectory()) {
-            // first we check if there is a package.json file with a `main` key
-            const packageFile = resolve(path, "package.json");
-            if (existsSync(packageFile) && statSync(packageFile).isFile()) {
-                const { main } = JSON.parse(readFileSync(packageFile, "utf8"));
-                if (main)
-                    return this.findInputFile(resolve(path, main));
-            }
-            // otherwise we look for a default entry point
-            const name = basename(path);
-            for (const subpath of [
-                resolve(path, "index.ts"),
-                resolve(path, name),
-                resolve(path, `${name}.ts`),
-                resolve(path, "main.ts"),
-                resolve(path, "index.js"),
-                resolve(path, `${name}.js`),
-                resolve(path, "main.js"),
-            ])
-                if (existsSync(subpath) && statSync(subpath).isFile())
-                    return subpath;
-            throw `Could not resolve an entry point in folder '${path}`;
-        }
-        else
-            throw `Path '${path}' should be a file or a directory`;
+    /**
+     * Start an inspect process.
+     * The process can receive js code and will execute it
+     */
+    runInspector() {
+        inspector.open(undefined, undefined, true);
+        // console.log("Running inspector")
+        // const inspectorPath = path.resolve(
+        // 	`${path.dirname(fileURLToPath(import.meta.url))}/../tools/inspector.js`
+        // )
+        // const inspector = fork(inspectorPath)
+        // inspector.on("exit", () => process.exit())
+        // inspector.send("Hello you ;)")
+        // setTimeout(() => inspector.send("Hello???"), 8_000)
     }
 }

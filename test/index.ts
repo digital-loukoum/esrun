@@ -7,6 +7,8 @@ import { bunkerFile } from "@digitak/bunker/library/io"
 import start from "fartest"
 import print from "cute-print"
 
+console.log("zabu???")
+
 start(async ({ stage, same }) => {
 	stage("CLI arguments received")
 	same(process.argv[3], "coco")
@@ -33,5 +35,8 @@ start(async ({ stage, same }) => {
 	same(new Zabu().yell(), "ZABU")
 
 	stage("Import another custom typescript file")
-	same(coco, 13)
+	same(coco, 12)
 })
+console.log("zabu!!!")
+
+// setTimeout(() => console.log("Process timeout"), 12_000)

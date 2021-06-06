@@ -1,18 +1,22 @@
 import type { BuildResult, OutputFile } from "esbuild/lib/main.js";
-import type { Mode } from "../Mode.js";
 export declare type Output = null | (BuildResult & {
     outputFiles: OutputFile[];
 });
 export default class Runner {
     args: string[];
+    protected readonly inspect: boolean;
     input: string;
     protected output: Output;
     protected dependencies: string[];
-    constructor(input: string, args?: string[]);
-    get mode(): Mode;
+    protected readonly watch: boolean;
+    constructor(input: string, args?: string[], inspect?: boolean);
     get outputCode(): string;
     run(): Promise<void>;
-    execute(): number;
+    execute(): Promise<number>;
     build(): Promise<void>;
-    protected findInputFile(path: string): string;
+    /**
+     * Start an inspect process.
+     * The process can receive js code and will execute it
+     */
+    runInspector(): void;
 }

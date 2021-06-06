@@ -1,22 +1,33 @@
 #!/usr/bin/env node
 import esrun from "./main.js"
-import type { Mode } from "./Mode"
+import type { Option } from "./Option"
 
 const { argv } = process
 
-const options: Record<string, Mode> = {
+const argumentOptions: Record<string, Option> = {
 	"--watch": "watch",
 	"-w": "watch",
 	"--inspect": "inspect",
 	"-i": "inspect",
 }
 
-let mode: Mode = "default"
-let argsOffset = 2
-
-if (argv[argsOffset] in options) {
-	mode = options[argv[argsOffset]]
-	argsOffset++
+const options: Record<Option, boolean> = {
+	watch: false,
+	inspect: false,
 }
 
-esrun(argv[argsOffset], argv.slice(argsOffset + 1), mode)
+let argsOffset = 2
+let argument: string
+
+while ((argument = argv[argsOffset]).startsWith("-")) {
+	if (argument in argumentOptions) {
+		options[argumentOptions[argument]] = true
+		argsOffset++
+	} else {
+		console.log(`Unknown option ${argv[argsOffset]}`)
+		process.exit(9)
+	}
+}
+
+console.log("Options:", options)
+esrun(argv[argsOffset], argv.slice(argsOffset + 1), options.watch, options.inspect)

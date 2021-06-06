@@ -1,7 +1,5 @@
 import Runner from "./runners/Runner"
 import Watcher from "./runners/Watcher"
-import Inspector from "./runners/Inspector"
-import type { Mode } from "./Mode"
 
 /**
  * Run any .ts or .js file
@@ -9,12 +7,8 @@ import type { Mode } from "./Mode"
 export default async function esrun(
 	inputFile: string,
 	args: string[] = [],
-	mode: Mode = "default"
+	watch = false,
+	inspect = false
 ) {
-	const runner = {
-		default: Runner,
-		watch: Watcher,
-		inspect: Inspector,
-	}[mode]
-	return new runner(inputFile, args).run()
+	return new (watch ? Watcher : Runner)(inputFile, args, inspect).run()
 }
