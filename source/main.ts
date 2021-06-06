@@ -10,5 +10,11 @@ export default async function esrun(
 	watch = false,
 	inspect = false
 ) {
+	if (watch && inspect) {
+		console.warn(
+			`--inspect and --watch options are not compatible together. Disabling watch mode.`
+		)
+		watch = false
+	}
 	return new (watch ? Watcher : Runner)(inputFile, args, inspect).run()
 }

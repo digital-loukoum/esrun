@@ -29,5 +29,4 @@ while ((argument = argv[argsOffset]).startsWith("-")) {
 	}
 }
 
-console.log("Options:", options)
 esrun(argv[argsOffset], argv.slice(argsOffset + 1), options.watch, options.inspect)

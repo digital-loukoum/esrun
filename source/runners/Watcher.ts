@@ -5,8 +5,8 @@ import path from "path"
 
 export default class Watcher extends Runner {
 	protected watcher: FSWatcher | null = null
-	protected readonly watch = true
-	protected readonly inspect = false
+	protected watch = true
+	protected inspect = false
 
 	async run() {
 		try {

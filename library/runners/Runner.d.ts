@@ -4,19 +4,14 @@ export declare type Output = null | (BuildResult & {
 });
 export default class Runner {
     args: string[];
-    protected readonly inspect: boolean;
+    protected inspect: boolean;
     input: string;
     protected output: Output;
     protected dependencies: string[];
-    protected readonly watch: boolean;
+    protected watch: boolean;
     constructor(input: string, args?: string[], inspect?: boolean);
     get outputCode(): string;
     run(): Promise<void>;
     execute(): Promise<number>;
     build(): Promise<void>;
-    /**
-     * Start an inspect process.
-     * The process can receive js code and will execute it
-     */
-    runInspector(): void;
 }

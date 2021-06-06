@@ -80,6 +80,26 @@ If you place it after the file path, it will be passed as an argument to `foo.ts
 
 This feature is very useful when you are doing test-driven development. You can just run `esrun --watch test.ts` and enjoy a live output of your changes right into your console.
 
+### Inspect mode
+
+You can also execute **esrun** in inspect mode.
+
+When run in inspect mode, your code will be connected to the Webkit DevTools to benefit the power of the browser console instead of the terminal console.
+
+First, run your program in inspect mode:
+
+```shell
+esrun --inspect foo.ts
+```
+
+Then open `about:inspect` in a **Chrome** / **Brave** / **Edge** browser. You should see your program running in the *Remote targets* section.
+
+Click on `Open dedicated DevTools for Node` and enjoy the browser console for your back-end program.
+
+In case of troubleshooting, read the [node documentation](https://nodejs.org/en/docs/guides/debugging-getting-started/).
+
+> Inspect and watch mode are alas not compatible yet.
+
 
 ### Importing a CJS module
 

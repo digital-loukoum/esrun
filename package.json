@@ -16,7 +16,8 @@
 		"test": "./library/bin.js test --watch coco",
 		"test:run": "./library/bin.js test --watch coco",
 		"test:watch": "./library/bin.js --watch test --watch coco",
-		"test:inspect": "./library/bin.js --inspect test --watch coco"
+		"test:inspect": "./library/bin.js --inspect test --watch coco",
+		"test:watch:inspect": "./library/bin.js --watch --inspect test --watch coco"
 	},
 	"engines": {
 		"node": ">=14.0"
