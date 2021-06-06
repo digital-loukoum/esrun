@@ -45,7 +45,8 @@ export default class Runner {
 
 		const commandArgs = []
 		if (this.inspect) {
-			commandArgs.push("--inspect-brk")
+			commandArgs.push("--inspect")
+			code = `setTimeout(() => console.log("Process timeout"), 3_600_000);` + code
 		}
 
 		commandArgs.push(
