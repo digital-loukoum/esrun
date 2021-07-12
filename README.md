@@ -80,6 +80,20 @@ If you place it after the file path, it will be passed as an argument to `foo.ts
 
 This feature is very useful when you are doing test-driven development. You can just run `esrun --watch test.ts` and enjoy a live output of your changes right into your console.
 
+You may want to watch other files than your code files. For example, if you load data from a configuration file. In this case you can specify a glob (or a list of globs) that have to be watched:
+
+```shell
+esrun --watch:src/*.json foo.ts
+```
+
+Then any `json` file in the `src/`folder will re-trigger the run.
+
+You can use several globs separated by a comma (but no space):
+
+```shell
+esrun --watch:src/*.json,test/*.json foo.ts
+```
+
 ### Inspect mode
 
 You can also execute **esrun** in inspect mode.
@@ -135,5 +149,10 @@ The library exports a single function that you can use to programmatically execu
 ``` ts
 import esrun from '@digitak/esrun'
 
-esrun(filePath: string, argv: string[], watch = false): unknown
+esrun(
+   filePath: string,
+   argv: string[],
+   watch: boolean | string[] = false, // you can pass an array of globs to watch
+   inspect = false
+): unknown
 ```

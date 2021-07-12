@@ -5,15 +5,22 @@ import path from "path"
 
 export default class Watcher extends Runner {
 	protected watcher: FSWatcher | null = null
-	protected watch = true
-	protected inspect = false
+
+	constructor(
+		input: string,
+		public args: string[] = [],
+		protected watch = [],
+		protected inspect: boolean = false
+	) {
+		super(input, args, watch instanceof Array ? watch : [], inspect)
+	}
 
 	async run() {
 		try {
 			console.clear()
 			await this.build()
 			this.execute()
-			this.watcher = watch([...this.dependencies, "package.json"])
+			this.watcher = watch([...this.dependencies, "package.json", ...this.watch])
 			this.watcher.on("change", this.rerun.bind(this))
 			this.watcher.on("unlink", this.rerun.bind(this))
 		} catch (error) {}

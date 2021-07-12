@@ -2,18 +2,19 @@ import Runner from "./Runner.js";
 import { watch } from "chokidar/index.js";
 import path from "path";
 export default class Watcher extends Runner {
-    constructor() {
-        super(...arguments);
+    constructor(input, args = [], watch = [], inspect = false) {
+        super(input, args, watch instanceof Array ? watch : [], inspect);
+        this.args = args;
+        this.watch = watch;
+        this.inspect = inspect;
         this.watcher = null;
-        this.watch = true;
-        this.inspect = false;
     }
     async run() {
         try {
             console.clear();
             await this.build();
             this.execute();
-            this.watcher = watch([...this.dependencies, "package.json"]);
+            this.watcher = watch([...this.dependencies, "package.json", ...this.watch]);
             this.watcher.on("change", this.rerun.bind(this));
             this.watcher.on("unlink", this.rerun.bind(this));
         }

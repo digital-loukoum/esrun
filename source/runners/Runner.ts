@@ -15,11 +15,11 @@ export default class Runner {
 	public input: string
 	protected output: Output = null
 	protected dependencies: string[] = []
-	protected watch: boolean = false
 
 	constructor(
 		input: string,
 		public args: string[] = [],
+		protected watch: boolean | string[] = false,
 		protected inspect: boolean = false
 	) {
 		this.input = findInputFile(input)
@@ -85,7 +85,7 @@ export default class Runner {
 				write: false,
 				platform: "node",
 				format: "esm",
-				incremental: this.watch,
+				incremental: !!this.watch,
 				plugins: [
 					{
 						name: "make-all-packages-external",

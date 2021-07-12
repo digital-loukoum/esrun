@@ -7,7 +7,7 @@ import Watcher from "./runners/Watcher"
 export default async function esrun(
 	inputFile: string,
 	args: string[] = [],
-	watch = false,
+	watch: boolean | string[] = false,
 	inspect = false
 ) {
 	if (watch && inspect) {
@@ -16,5 +16,5 @@ export default async function esrun(
 		)
 		watch = false
 	}
-	return new (watch ? Watcher : Runner)(inputFile, args, inspect).run()
+	return new (watch ? Watcher : Runner)(inputFile, args, watch, inspect).run()
 }

@@ -4,12 +4,12 @@ import resolveDependency from "../resolveDependency.js";
 import { spawn } from "child_process";
 import findInputFile from "../tools/findInputFile.js";
 export default class Runner {
-    constructor(input, args = [], inspect = false) {
+    constructor(input, args = [], watch = false, inspect = false) {
         this.args = args;
+        this.watch = watch;
         this.inspect = inspect;
         this.output = null;
         this.dependencies = [];
-        this.watch = false;
         this.input = findInputFile(input);
     }
     get outputCode() {
@@ -61,7 +61,7 @@ export default class Runner {
                 write: false,
                 platform: "node",
                 format: "esm",
-                incremental: this.watch,
+                incremental: !!this.watch,
                 plugins: [
                     {
                         name: "make-all-packages-external",
