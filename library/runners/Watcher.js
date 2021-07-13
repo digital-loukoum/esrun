@@ -1,6 +1,17 @@
 import Runner from "./Runner.js";
 import { watch } from "chokidar/index.js";
 import path from "path";
+import anymatch from "anymatch/index.js";
+function debounce(func, wait) {
+    let timeout = null;
+    return function (..._) {
+        if (timeout)
+            clearTimeout(timeout);
+        else
+            func(...arguments);
+        timeout = setTimeout(() => (timeout = null), wait);
+    };
+}
 export default class Watcher extends Runner {
     constructor(input, args = [], watch = [], inspect = false) {
         super(input, args, watch instanceof Array ? watch : [], inspect);
@@ -8,6 +19,7 @@ export default class Watcher extends Runner {
         this.watch = watch;
         this.inspect = inspect;
         this.watcher = null;
+        this.watch = this.watch.map(glob => path.resolve(glob));
     }
     async run() {
         try {
@@ -15,8 +27,8 @@ export default class Watcher extends Runner {
             await this.build();
             this.execute();
             this.watcher = watch([...this.dependencies, "package.json", ...this.watch]);
-            this.watcher.on("change", this.rerun.bind(this));
-            this.watcher.on("unlink", this.rerun.bind(this));
+            this.watcher.on("change", debounce(this.rerun.bind(this), 300));
+            this.watcher.on("unlink", debounce(this.rerun.bind(this), 300));
         }
         catch (error) { }
     }
@@ -28,16 +40,20 @@ export default class Watcher extends Runner {
         this.execute();
         // we update the list of watched files
         if (this.output) {
+            const packageFile = path.resolve("package.json");
             const watchedDependencies = [];
             for (const [directory, files] of Object.entries(watcher.getWatched())) {
                 watchedDependencies.push(...files.map(file => path.join(directory, file)));
             }
-            for (const dependency of watchedDependencies)
-                if (dependency != "package.json" && !this.dependencies.includes(dependency))
+            for (const dependency of watchedDependencies) {
+                if (dependency != packageFile && !anymatch(this.watch, dependency) && !this.dependencies.includes(dependency)) {
                     watcher.unwatch(dependency);
+                }
+            }
             for (const dependency of this.dependencies)
-                if (!watchedDependencies.includes(dependency))
+                if (!watchedDependencies.includes(dependency)) {
                     watcher.add(dependency);
+                }
         }
     }
     async rebuild() {
