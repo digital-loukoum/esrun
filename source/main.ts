@@ -8,7 +8,8 @@ export default async function esrun(
 	inputFile: string,
 	args: string[] = [],
 	watch: boolean | string[] = false,
-	inspect = false
+	inspect = false,
+	exitAfterExecute = true
 ) {
 	if (watch && inspect) {
 		console.warn(
@@ -16,5 +17,5 @@ export default async function esrun(
 		)
 		watch = false
 	}
-	return new (watch ? Watcher : Runner)(inputFile, args, watch, inspect).run()
+	return new (watch ? Watcher : Runner)(inputFile, args, watch, inspect, exitAfterExecute).run()
 }

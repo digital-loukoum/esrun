@@ -20,7 +20,8 @@ export default class Runner {
 		input: string,
 		public args: string[] = [],
 		protected watch: boolean | string[] = false,
-		protected inspect: boolean = false
+		protected inspect: boolean = false,
+		protected exitAfterExecuted: boolean = true,
 	) {
 		this.input = findInputFile(input)
 	}
@@ -32,7 +33,8 @@ export default class Runner {
 	async run() {
 		try {
 			await this.build()
-			process.exit(await this.execute())
+			const ret = await this.execute()
+			if (this.exitAfterExecuted) process.exit(ret)
 		} catch (error) {
 			console.error(error)
 			process.exit(1)
