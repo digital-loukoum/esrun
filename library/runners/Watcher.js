@@ -14,12 +14,12 @@ function debounce(func, wait) {
 }
 export default class Watcher extends Runner {
     constructor(input, args = [], watch = [], inspect = false) {
-        super(input, args, watch instanceof Array ? watch : [], inspect);
+        super(input, args);
         this.args = args;
         this.watch = watch;
         this.inspect = inspect;
         this.watcher = null;
-        this.watch = this.watch.map(glob => path.resolve(glob));
+        this.watch = watch instanceof Array ? this.watch.map(glob => path.resolve(glob)) : [];
     }
     async run() {
         try {
@@ -46,7 +46,9 @@ export default class Watcher extends Runner {
                 watchedDependencies.push(...files.map(file => path.join(directory, file)));
             }
             for (const dependency of watchedDependencies) {
-                if (dependency != packageFile && !anymatch(this.watch, dependency) && !this.dependencies.includes(dependency)) {
+                if (dependency != packageFile &&
+                    !anymatch(this.watch, dependency) &&
+                    !this.dependencies.includes(dependency)) {
                     watcher.unwatch(dependency);
                 }
             }

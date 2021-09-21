@@ -7,7 +7,7 @@ import anymatch from "anymatch"
 function debounce(func: Function, wait: number) {
 	let timeout: NodeJS.Timeout | null = null
 
-	return function(..._: any[]) {
+	return function (..._: any[]) {
 		if (timeout) clearTimeout(timeout)
 		else func(...arguments)
 		timeout = setTimeout(() => (timeout = null), wait)
@@ -23,8 +23,8 @@ export default class Watcher extends Runner {
 		protected watch: string[] = [],
 		protected inspect: boolean = false
 	) {
-		super(input, args, watch instanceof Array ? watch : [], inspect)
-		this.watch = this.watch.map(glob => path.resolve(glob))
+		super(input, args)
+		this.watch = watch instanceof Array ? this.watch.map(glob => path.resolve(glob)) : []
 	}
 
 	async run() {
@@ -54,7 +54,11 @@ export default class Watcher extends Runner {
 			}
 
 			for (const dependency of watchedDependencies) {
-				if (dependency != packageFile && !anymatch(this.watch, dependency) && !this.dependencies.includes(dependency)) {
+				if (
+					dependency != packageFile &&
+					!anymatch(this.watch, dependency) &&
+					!this.dependencies.includes(dependency)
+				) {
 					watcher.unwatch(dependency)
 				}
 			}
