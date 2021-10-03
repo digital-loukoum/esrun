@@ -11,13 +11,14 @@
 		"esrun": "library/bin.js"
 	},
 	"scripts": {
-		"check": "tsc --noEmit",
+		"lint": "tsc --noEmit",
 		"build": "node scripts/build.js",
 		"test": "./library/bin.js test --watch coco",
 		"test:run": "./library/bin.js test --watch coco",
 		"test:watch": "./library/bin.js --watch:test/*.json test --watch coco",
 		"test:inspect": "./library/bin.js --inspect test --watch coco",
-		"test:watch:inspect": "./library/bin.js --watch --inspect test --watch coco"
+		"test:watch:inspect": "./library/bin.js --watch --inspect test --watch coco",
+		"test:server": "./library/bin.js --watch test/server"
 	},
 	"engines": {
 		"node": ">=14.0"
@@ -50,6 +51,7 @@
 		"cute-print": "^1.0.4",
 		"fartest": "^2.1.6",
 		"fsevents": "^2.3.2",
+		"polka": "^0.5.2",
 		"typescript": "^4.3.2"
 	}
 }

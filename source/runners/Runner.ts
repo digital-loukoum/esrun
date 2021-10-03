@@ -1,8 +1,8 @@
 import { build } from "esbuild"
 import type { BuildResult, OutputFile } from "esbuild"
 import addJsExtensions from "@digitak/grubber/library/utilities/addJsExtensions"
-import resolveDependency from "../resolveDependency"
-import { spawn } from "child_process"
+import resolveDependency from "../tools/resolveDependency"
+import { ChildProcess, spawn } from "child_process"
 import findInputFile from "../tools/findInputFile"
 
 export type Output =
@@ -15,11 +15,12 @@ export default class Runner {
 	public input: string
 	protected output: Output = null
 	protected dependencies: string[] = []
+	protected childProcess?: ChildProcess
 
 	constructor(
 		input: string,
 		public args: string[] = [],
-		protected watch: boolean | string[] = false,
+		protected watch: boolean | string[] = false,
 		protected inspect: boolean = false
 	) {
 		this.input = findInputFile(input)
@@ -59,15 +60,15 @@ export default class Runner {
 		)
 
 		try {
-			const child = spawn("node", commandArgs, {
+			this.childProcess = spawn("node", commandArgs, {
 				stdio: "inherit",
 			})
 			// child.stdout.on("data", data => console.log(data.toString()))
 			// child.stderr.on("data", data => console.error(data.toString()))
 
 			return new Promise(resolve => {
-				child.on("close", code => resolve(code || 0))
-				child.on("error", error => {
+				this.childProcess?.on("close", code => resolve(code || 0))
+				this.childProcess?.on("error", error => {
 					console.error(error)
 					return resolve(1)
 				})

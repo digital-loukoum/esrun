@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import esrun from "./main.js"
-import type { Option } from "./Option"
+import type { Option } from "./types/Option"
 
 const { argv } = process
 
@@ -20,10 +20,10 @@ let argsOffset = 2
 let argument: string
 
 while ((argument = argv[argsOffset]).startsWith("-")) {
-	const [command, parameters] = argument.split(':')
-	
+	const [command, parameters] = argument.split(":")
+
 	if (command in argumentOptions) {
-		options[argumentOptions[command]] = parameters ? parameters.split(',') : true
+		options[argumentOptions[command]] = parameters ? parameters.split(",") : true
 		argsOffset++
 	} else {
 		console.log(`Unknown option ${command}`)

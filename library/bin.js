@@ -14,9 +14,9 @@ const options = {
 let argsOffset = 2;
 let argument;
 while ((argument = argv[argsOffset]).startsWith("-")) {
-    const [command, parameters] = argument.split(':');
+    const [command, parameters] = argument.split(":");
     if (command in argumentOptions) {
-        options[argumentOptions[command]] = parameters ? parameters.split(',') : true;
+        options[argumentOptions[command]] = parameters ? parameters.split(",") : true;
         argsOffset++;
     }
     else {

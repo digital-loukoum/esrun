@@ -1,6 +1,6 @@
 import { build } from "esbuild/lib/main.js";
 import addJsExtensions from "@digitak/grubber/library/utilities/addJsExtensions.js";
-import resolveDependency from "../resolveDependency.js";
+import resolveDependency from "../tools/resolveDependency.js";
 import { spawn } from "child_process";
 import findInputFile from "../tools/findInputFile.js";
 export default class Runner {
@@ -36,14 +36,14 @@ export default class Runner {
         }
         commandArgs.push("--input-type=module", "--eval", code.replace(/'/g, "\\'"), "--", this.input, ...this.args);
         try {
-            const child = spawn("node", commandArgs, {
+            this.childProcess = spawn("node", commandArgs, {
                 stdio: "inherit",
             });
             // child.stdout.on("data", data => console.log(data.toString()))
             // child.stderr.on("data", data => console.error(data.toString()))
             return new Promise(resolve => {
-                child.on("close", code => resolve(code || 0));
-                child.on("error", error => {
+                this.childProcess?.on("close", code => resolve(code || 0));
+                this.childProcess?.on("error", error => {
                     console.error(error);
                     return resolve(1);
                 });

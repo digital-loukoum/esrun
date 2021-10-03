@@ -42,6 +42,10 @@ export default class Watcher extends Runner {
 		if (!this.watcher) throw `Cannot re-run before a first run`
 		const { watcher } = this
 
+		if (this.childProcess) {
+			this.childProcess?.kill("SIGINT")
+			this.childProcess = undefined
+		}
 		await this.rebuild()
 		this.execute()
 
