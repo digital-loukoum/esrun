@@ -40,44 +40,6 @@ export default class Runner {
 		}
 	}
 
-	async execute(): Promise<number> {
-		if (!this.output) return 1
-		let code = addJsExtensions(this.outputCode, resolveDependency)
-
-		const commandArgs = []
-		if (this.inspect) {
-			commandArgs.push("--inspect")
-			code = `setTimeout(() => console.log("Process timeout"), 3_600_000);` + code
-		}
-
-		commandArgs.push(
-			"--input-type=module",
-			"--eval",
-			code.replace(/'/g, "\\'"),
-			"--",
-			this.input,
-			...this.args
-		)
-
-		try {
-			this.childProcess = spawn("node", commandArgs, {
-				stdio: "inherit",
-			})
-			// child.stdout.on("data", data => console.log(data.toString()))
-			// child.stderr.on("data", data => console.error(data.toString()))
-
-			return new Promise(resolve => {
-				this.childProcess?.on("close", code => resolve(code || 0))
-				this.childProcess?.on("error", error => {
-					console.error(error)
-					return resolve(1)
-				})
-			})
-		} catch (error) {
-			return 1
-		}
-	}
-
 	async build() {
 		try {
 			this.output = await build({
@@ -113,6 +75,49 @@ export default class Runner {
 			})
 		} catch (error) {
 			this.output = null
+		}
+	}
+
+	async transform(transformer: (content: string) => string | Promise<string>) {
+		if (!this.output?.outputFiles[0]) return
+		this.output.outputFiles[0].text = await transformer(this.output.outputFiles[0].text)
+	}
+
+	async execute(): Promise<number> {
+		if (!this.output) return 1
+		let code = addJsExtensions(this.outputCode, resolveDependency)
+
+		const commandArgs = []
+		if (this.inspect) {
+			commandArgs.push("--inspect")
+			code = `setTimeout(() => console.log("Process timeout"), 3_600_000);` + code
+		}
+
+		commandArgs.push(
+			"--input-type=module",
+			"--eval",
+			code.replace(/'/g, "\\'"),
+			"--",
+			this.input,
+			...this.args
+		)
+
+		try {
+			this.childProcess = spawn("node", commandArgs, {
+				stdio: "inherit",
+			})
+			// child.stdout.on("data", data => console.log(data.toString()))
+			// child.stderr.on("data", data => console.error(data.toString()))
+
+			return new Promise(resolve => {
+				this.childProcess?.on("close", code => resolve(code || 0))
+				this.childProcess?.on("error", error => {
+					console.error(error)
+					return resolve(1)
+				})
+			})
+		} catch (error) {
+			return 1
 		}
 	}
 }
