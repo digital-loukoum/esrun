@@ -15,6 +15,7 @@ export default class Runner {
     constructor(input: string, args?: string[], watch?: boolean | string[], inspect?: boolean);
     get outputCode(): string;
     run(): Promise<void>;
-    execute(): Promise<number>;
     build(): Promise<void>;
+    transform(transformer: (content: string) => string | Promise<string>): Promise<void>;
+    execute(): Promise<number>;
 }
