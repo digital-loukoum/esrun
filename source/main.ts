@@ -1,6 +1,8 @@
 import Runner from "./runners/Runner"
 import Watcher from "./runners/Watcher"
 
+export { Runner, Watcher, esrun }
+
 /**
  * Run any .ts or .js file
  */
