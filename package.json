@@ -1,6 +1,6 @@
 {
 	"name": "@digitak/esrun",
-	"version": "1.2.14",
+	"version": "1.2.15",
 	"type": "module",
 	"description": "Execute directly your Typescript files using Esbuild",
 	"files": [
