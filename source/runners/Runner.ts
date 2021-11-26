@@ -28,10 +28,6 @@ export default class Runner {
 		this.inputFile = findInputFile(inputFile)
 	}
 
-	// get outputCode(): string {
-	// 	return this.buildOutput?.outputFiles[0]?.text || ""
-	// }
-
 	async run() {
 		try {
 			await this.build()
