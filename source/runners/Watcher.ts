@@ -80,8 +80,10 @@ export default class Watcher extends Runner {
 		if (this.buildOutput) {
 			try {
 				this.buildOutput = (await this.buildOutput.rebuild!()) as BuildOutput
+				this.outputCode = this.buildOutput?.outputFiles[0]?.text || ""
 			} catch (error) {
 				this.buildOutput = null
+				this.outputCode = ""
 			}
 		} else {
 			await this.build()

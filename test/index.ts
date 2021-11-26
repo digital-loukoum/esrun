@@ -6,8 +6,9 @@ import { bunker } from "@digitak/bunker"
 import { bunkerFile } from "@digitak/bunker/library/io"
 import start from "fartest"
 import print from "cute-print"
+import Runner from "../source/runners/Runner"
 
-start(async ({ stage, same }) => {
+start(async ({ stage, same, test }) => {
 	stage("CLI arguments received")
 	same(process.argv[3], "coco")
 
@@ -34,4 +35,10 @@ start(async ({ stage, same }) => {
 
 	stage("Import another custom typescript file")
 	same(coco, 11)
+
+	stage("Use transformer")
+	const runner = new Runner("test/coco")
+	await runner.build()
+	await runner.transform(content => content.replace("11", "12"))
+	test(runner.outputCode.includes("12"), "Should export 12")
 })

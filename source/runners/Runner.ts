@@ -14,6 +14,7 @@ export type BuildOutput =
 export default class Runner {
 	public inputFile: string
 	public output = ""
+	public outputCode = ""
 	protected buildOutput: BuildOutput = null
 	protected dependencies: string[] = []
 	protected childProcess?: ChildProcess
@@ -27,9 +28,9 @@ export default class Runner {
 		this.inputFile = findInputFile(inputFile)
 	}
 
-	get outputCode(): string {
-		return this.buildOutput?.outputFiles[0]?.text || ""
-	}
+	// get outputCode(): string {
+	// 	return this.buildOutput?.outputFiles[0]?.text || ""
+	// }
 
 	async run() {
 		try {
@@ -75,16 +76,15 @@ export default class Runner {
 				...(buildOptions ?? {}),
 				write: false,
 			})
+			this.outputCode = this.buildOutput?.outputFiles[0]?.text || ""
 		} catch (error) {
 			this.buildOutput = null
+			this.outputCode = ""
 		}
 	}
 
 	async transform(transformer: (content: string) => string | Promise<string>) {
-		if (!this.buildOutput?.outputFiles[0]) return
-		this.buildOutput.outputFiles[0].text = await transformer(
-			this.buildOutput.outputFiles[0].text
-		)
+		this.outputCode = await transformer(this.outputCode)
 	}
 
 	async execute(): Promise<number> {
