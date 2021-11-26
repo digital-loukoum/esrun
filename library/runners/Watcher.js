@@ -43,7 +43,7 @@ export default class Watcher extends Runner {
         await this.rebuild();
         this.execute();
         // we update the list of watched files
-        if (this.output) {
+        if (this.buildOutput) {
             const packageFile = path.resolve("package.json");
             const watchedDependencies = [];
             for (const [directory, files] of Object.entries(watcher.getWatched())) {
@@ -65,12 +65,12 @@ export default class Watcher extends Runner {
     async rebuild() {
         console.clear();
         this.dependencies.length = 0;
-        if (this.output) {
+        if (this.buildOutput) {
             try {
-                this.output = (await this.output.rebuild());
+                this.buildOutput = (await this.buildOutput.rebuild());
             }
             catch (error) {
-                this.output = null;
+                this.buildOutput = null;
             }
         }
         else {

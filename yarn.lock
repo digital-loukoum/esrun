@@ -14,10 +14,15 @@
   dependencies:
     "@digitak/tsc-esm" "^1.0.3"
 
-"@digitak/grubber@^1.0.1", "@digitak/grubber@^1.0.2":
+"@digitak/grubber@^1.0.1":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@digitak/grubber/-/grubber-1.0.2.tgz#342830686ed43d072e6cf4c2447f72bd9acbc34a"
   integrity sha512-cufCjWJh9MEsdMZgg4MAyUYtLdwboyiqIYir+/zroxWQ9XFqrYLin/tj1eJuH3UyW2qoy5RWXF4TbteDZ3zd7Q==
+
+"@digitak/grubber@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@digitak/grubber/-/grubber-1.0.3.tgz#2e079349beb25f74151729ba36d2b9d975911f65"
+  integrity sha512-CD24zO8BpOjcxq1sIx1xweoBxtm8lJ/kmapsJI4aWnASmJ8tBuIPt3U/yBsyYEl/OLJYjmvilMZ6meIHtm4d7w==
 
 "@digitak/tsc-esm@^1.0.3":
   version "1.0.3"

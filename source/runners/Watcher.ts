@@ -1,4 +1,4 @@
-import Runner, { Output } from "./Runner"
+import Runner, { BuildOutput } from "./Runner"
 import { watch } from "chokidar"
 import type { FSWatcher } from "chokidar"
 import path from "path"
@@ -50,7 +50,7 @@ export default class Watcher extends Runner {
 		this.execute()
 
 		// we update the list of watched files
-		if (this.output) {
+		if (this.buildOutput) {
 			const packageFile = path.resolve("package.json")
 			const watchedDependencies = []
 			for (const [directory, files] of Object.entries(watcher.getWatched())) {
@@ -77,11 +77,11 @@ export default class Watcher extends Runner {
 	async rebuild() {
 		console.clear()
 		this.dependencies.length = 0
-		if (this.output) {
+		if (this.buildOutput) {
 			try {
-				this.output = (await this.output.rebuild!()) as Output
+				this.buildOutput = (await this.buildOutput.rebuild!()) as BuildOutput
 			} catch (error) {
-				this.output = null
+				this.buildOutput = null
 			}
 		} else {
 			await this.build()

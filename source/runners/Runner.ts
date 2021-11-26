@@ -1,33 +1,34 @@
-import { build } from "esbuild"
+import { build, BuildOptions } from "esbuild"
 import type { BuildResult, OutputFile } from "esbuild"
 import addJsExtensions from "@digitak/grubber/library/utilities/addJsExtensions"
 import resolveDependency from "../tools/resolveDependency"
 import { ChildProcess, spawn } from "child_process"
 import findInputFile from "../tools/findInputFile"
 
-export type Output =
+export type BuildOutput =
 	| null
 	| (BuildResult & {
 			outputFiles: OutputFile[]
 	  })
 
 export default class Runner {
-	public input: string
-	protected output: Output = null
+	public inputFile: string
+	public output = ""
+	protected buildOutput: BuildOutput = null
 	protected dependencies: string[] = []
 	protected childProcess?: ChildProcess
 
 	constructor(
-		input: string,
+		inputFile: string,
 		public args: string[] = [],
 		protected watch: boolean | string[] = false,
 		protected inspect: boolean = false
 	) {
-		this.input = findInputFile(input)
+		this.inputFile = findInputFile(inputFile)
 	}
 
 	get outputCode(): string {
-		return this.output?.outputFiles[0]?.text || ""
+		return this.buildOutput?.outputFiles[0]?.text || ""
 	}
 
 	async run() {
@@ -40,12 +41,11 @@ export default class Runner {
 		}
 	}
 
-	async build() {
+	async build(buildOptions?: BuildOptions) {
 		try {
-			this.output = await build({
-				entryPoints: [this.input],
+			this.buildOutput = await build({
+				entryPoints: [this.inputFile],
 				bundle: true,
-				write: false,
 				platform: "node",
 				format: "esm",
 				incremental: !!this.watch,
@@ -72,19 +72,24 @@ export default class Runner {
 						},
 					},
 				],
+				...(buildOptions ?? {}),
+				write: false,
 			})
 		} catch (error) {
-			this.output = null
+			this.buildOutput = null
 		}
 	}
 
 	async transform(transformer: (content: string) => string | Promise<string>) {
-		if (!this.output?.outputFiles[0]) return
-		this.output.outputFiles[0].text = await transformer(this.output.outputFiles[0].text)
+		if (!this.buildOutput?.outputFiles[0]) return
+		this.buildOutput.outputFiles[0].text = await transformer(
+			this.buildOutput.outputFiles[0].text
+		)
 	}
 
 	async execute(): Promise<number> {
-		if (!this.output) return 1
+		this.output = ""
+		if (!this.buildOutput) return 1
 		let code = addJsExtensions(this.outputCode, resolveDependency)
 
 		const commandArgs = []
@@ -98,7 +103,7 @@ export default class Runner {
 			"--eval",
 			code.replace(/'/g, "\\'"),
 			"--",
-			this.input,
+			this.inputFile,
 			...this.args
 		)
 
@@ -106,8 +111,7 @@ export default class Runner {
 			this.childProcess = spawn("node", commandArgs, {
 				stdio: "inherit",
 			})
-			// child.stdout.on("data", data => console.log(data.toString()))
-			// child.stderr.on("data", data => console.error(data.toString()))
+			this.childProcess?.stdout?.on("data", data => (this.output += data))
 
 			return new Promise(resolve => {
 				this.childProcess?.on("close", code => resolve(code || 0))

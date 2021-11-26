@@ -4,16 +4,17 @@ import resolveDependency from "../tools/resolveDependency.js";
 import { spawn } from "child_process";
 import findInputFile from "../tools/findInputFile.js";
 export default class Runner {
-    constructor(input, args = [], watch = false, inspect = false) {
+    constructor(inputFile, args = [], watch = false, inspect = false) {
         this.args = args;
         this.watch = watch;
         this.inspect = inspect;
-        this.output = null;
+        this.output = "";
+        this.buildOutput = null;
         this.dependencies = [];
-        this.input = findInputFile(input);
+        this.inputFile = findInputFile(inputFile);
     }
     get outputCode() {
-        return this.output?.outputFiles[0]?.text || "";
+        return this.buildOutput?.outputFiles[0]?.text || "";
     }
     async run() {
         try {
@@ -25,12 +26,11 @@ export default class Runner {
             process.exit(1);
         }
     }
-    async build() {
+    async build(buildOptions) {
         try {
-            this.output = await build({
-                entryPoints: [this.input],
+            this.buildOutput = await build({
+                entryPoints: [this.inputFile],
                 bundle: true,
-                write: false,
                 platform: "node",
                 format: "esm",
                 incremental: !!this.watch,
@@ -57,19 +57,22 @@ export default class Runner {
                         },
                     },
                 ],
+                ...(buildOptions ?? {}),
+                write: false,
             });
         }
         catch (error) {
-            this.output = null;
+            this.buildOutput = null;
         }
     }
     async transform(transformer) {
-        if (!this.output?.outputFiles[0])
+        if (!this.buildOutput?.outputFiles[0])
             return;
-        this.output.outputFiles[0].text = await transformer(this.output.outputFiles[0].text);
+        this.buildOutput.outputFiles[0].text = await transformer(this.buildOutput.outputFiles[0].text);
     }
     async execute() {
-        if (!this.output)
+        this.output = "";
+        if (!this.buildOutput)
             return 1;
         let code = addJsExtensions(this.outputCode, resolveDependency);
         const commandArgs = [];
@@ -77,13 +80,12 @@ export default class Runner {
             commandArgs.push("--inspect");
             code = `setTimeout(() => console.log("Process timeout"), 3_600_000);` + code;
         }
-        commandArgs.push("--input-type=module", "--eval", code.replace(/'/g, "\\'"), "--", this.input, ...this.args);
+        commandArgs.push("--input-type=module", "--eval", code.replace(/'/g, "\\'"), "--", this.inputFile, ...this.args);
         try {
             this.childProcess = spawn("node", commandArgs, {
                 stdio: "inherit",
             });
-            // child.stdout.on("data", data => console.log(data.toString()))
-            // child.stderr.on("data", data => console.error(data.toString()))
+            this.childProcess?.stdout?.on("data", data => (this.output += data));
             return new Promise(resolve => {
                 this.childProcess?.on("close", code => resolve(code || 0));
                 this.childProcess?.on("error", error => {
