@@ -37,8 +37,18 @@ start(async ({ stage, same, test }) => {
 	same(coco, 11)
 
 	stage("Use transformer")
-	const runner = new Runner("test/coco")
-	await runner.build()
-	await runner.transform(content => content.replace("11", "12"))
-	test(runner.outputCode.includes("12"), "Should export 12")
+	{
+		const runner = new Runner("test/coco")
+		await runner.build()
+		await runner.transform(content => content.replace("11", "12"))
+		test(runner.outputCode.includes("12"), "Should export 12")
+	}
+
+	stage("Inter process communication")
+	{
+		const runner = new Runner("test/ipc/child", { interProcessCommunication: true })
+		await runner.build()
+		await runner.execute()
+		same(runner.output, "Hello", "process.send")
+	}
 })

@@ -14,18 +14,31 @@ export type BuildOutput =
 export default class Runner {
 	public inputFile: string
 	public output = ""
+	public stdout = ""
+	public stderr = ""
 	public outputCode = ""
+	public args: string[] = []
+	protected watch: boolean | string[] = false
+	protected inspect: boolean = false
+	protected interProcessCommunication = false
 	protected buildOutput: BuildOutput = null
 	protected dependencies: string[] = []
 	protected childProcess?: ChildProcess
 
 	constructor(
 		inputFile: string,
-		public args: string[] = [],
-		protected watch: boolean | string[] = false,
-		protected inspect: boolean = false
+		options?: {
+			args?: string[]
+			watch?: boolean | string[]
+			inspect?: boolean
+			interProcessCommunication?: boolean
+		}
 	) {
 		this.inputFile = findInputFile(inputFile)
+		this.args = options?.args ?? []
+		this.watch = options?.watch ?? false
+		this.inspect = options?.inspect ?? false
+		this.interProcessCommunication = options?.interProcessCommunication ?? false
 	}
 
 	async run() {
@@ -84,7 +97,7 @@ export default class Runner {
 	}
 
 	async execute(): Promise<number> {
-		this.output = ""
+		this.output = this.stdout = this.stderr = ""
 		if (!this.buildOutput) return 1
 		let code = addJsExtensions(this.outputCode, resolveDependency)
 
@@ -105,9 +118,21 @@ export default class Runner {
 
 		try {
 			this.childProcess = spawn("node", commandArgs, {
-				stdio: "inherit",
+				stdio: this.interProcessCommunication
+					? ["pipe", "pipe", "pipe", "ipc"]
+					: "inherit",
 			})
-			this.childProcess?.stdout?.on("data", data => (this.output += data))
+			if (this.interProcessCommunication) {
+				this.childProcess?.on("message", message => {
+					this.output += message.toString()
+				})
+				this.childProcess?.stdout?.on("data", data => {
+					this.stdout += data.toString()
+				})
+				this.childProcess?.stderr?.on("data", data => {
+					this.stderr += data.toString()
+				})
+			}
 
 			return new Promise(resolve => {
 				this.childProcess?.on("close", code => resolve(code || 0))

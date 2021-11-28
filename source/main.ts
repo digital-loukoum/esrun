@@ -18,5 +18,5 @@ export default async function esrun(
 		)
 		watch = false
 	}
-	return new (watch ? Watcher : Runner)(inputFile, args, watch, inspect).run()
+	return new (watch ? Watcher : Runner)(inputFile, { args, watch, inspect }).run()
 }

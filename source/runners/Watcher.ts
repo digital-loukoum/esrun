@@ -16,15 +16,20 @@ function debounce(func: Function, wait: number) {
 
 export default class Watcher extends Runner {
 	protected watcher: FSWatcher | null = null
+	protected watch: string[] = []
 
 	constructor(
 		input: string,
-		public args: string[] = [],
-		protected watch: string[] = [],
-		protected inspect: boolean = false
+		options?: {
+			args?: string[]
+			watch?: string[]
+			inspect?: boolean
+			interProcessCommunication?: boolean
+		}
 	) {
-		super(input, args)
-		this.watch = watch instanceof Array ? this.watch.map(glob => path.resolve(glob)) : []
+		super(input, options)
+		this.watch =
+			options?.watch instanceof Array ? options.watch.map(glob => path.resolve(glob)) : []
 	}
 
 	async run() {
