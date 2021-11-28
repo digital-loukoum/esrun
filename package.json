@@ -1,6 +1,6 @@
 {
 	"name": "@digitak/esrun",
-	"version": "1.2.19",
+	"version": "2.0.1",
 	"type": "module",
 	"description": "Execute directly your Typescript files using Esbuild",
 	"files": [
@@ -18,7 +18,8 @@
 		"test:watch": "./library/bin.js --watch:test/*.json test --watch coco",
 		"test:inspect": "./library/bin.js --inspect test --watch coco",
 		"test:watch:inspect": "./library/bin.js --watch --inspect test --watch coco",
-		"test:server": "./library/bin.js --watch test/server"
+		"test:server": "./library/bin.js --watch test/server",
+		"test:ipc": "./library/bin.js test/ipc"
 	},
 	"engines": {
 		"node": ">=14.0"
