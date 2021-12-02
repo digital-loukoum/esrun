@@ -25,6 +25,10 @@ export default class Runner {
 	protected dependencies: string[] = []
 	protected childProcess?: ChildProcess
 
+	getDependencies(): readonly string[] {
+		return this.dependencies
+	}
+
 	constructor(
 		inputFile: string,
 		options?: {
