@@ -1,6 +1,6 @@
 {
 	"name": "@digitak/esrun",
-	"version": "2.0.4",
+	"version": "2.0.5",
 	"type": "module",
 	"description": "Execute directly your Typescript files using Esbuild",
 	"files": [
@@ -13,6 +13,7 @@
 	"scripts": {
 		"lint": "tsc --noEmit",
 		"build": "node scripts/build.js",
+		"deploy": "yarn build && yarn test && yarn publish",
 		"test": "./library/bin.js test --watch coco",
 		"test:run": "./library/bin.js test --watch coco",
 		"test:watch": "./library/bin.js --watch:test/*.json test --watch coco",
