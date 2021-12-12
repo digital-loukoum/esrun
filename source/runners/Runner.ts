@@ -1,4 +1,4 @@
-import { build, BuildOptions } from "esbuild"
+import { build, BuildOptions, Plugin } from "esbuild"
 import type { BuildResult, OutputFile } from "esbuild"
 import addJsExtensions from "@digitak/grubber/library/utilities/addJsExtensions"
 import resolveDependency from "../tools/resolveDependency"
@@ -21,6 +21,7 @@ export default class Runner {
 	protected watch: boolean | string[] = false
 	protected inspect: boolean = false
 	protected interProcessCommunication = false
+	protected makeAllPackagesExternal = true
 	protected buildOutput: BuildOutput = null
 	protected dependencies: string[] = []
 	protected childProcess?: ChildProcess
@@ -36,6 +37,7 @@ export default class Runner {
 			watch?: boolean | string[]
 			inspect?: boolean
 			interProcessCommunication?: boolean
+			makeAllPackagesExternal?: boolean
 		}
 	) {
 		this.inputFile = findInputFile(inputFile)
@@ -43,6 +45,7 @@ export default class Runner {
 		this.watch = options?.watch ?? false
 		this.inspect = options?.inspect ?? false
 		this.interProcessCommunication = options?.interProcessCommunication ?? false
+		this.makeAllPackagesExternal = options?.makeAllPackagesExternal ?? true
 	}
 
 	async run() {
@@ -56,6 +59,33 @@ export default class Runner {
 	}
 
 	async build(buildOptions?: BuildOptions) {
+		const plugins: Plugin[] = []
+
+		if (this.makeAllPackagesExternal) {
+			plugins.push({
+				name: "make-all-packages-external",
+				setup: build => {
+					const filter = /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/ // Must not start with "/" or "./" or "../"
+					build.onResolve({ filter }, args => {
+						return {
+							path: args.path,
+							external: true,
+						}
+					})
+				},
+			})
+		}
+
+		plugins.push({
+			name: "list-dependencies",
+			setup: build => {
+				build.onLoad({ filter: /.*/ }, async ({ path }) => {
+					this.dependencies.push(path)
+					return null
+				})
+			},
+		})
+
 		try {
 			this.buildOutput = await build({
 				entryPoints: [this.inputFile],
@@ -63,29 +93,7 @@ export default class Runner {
 				platform: "node",
 				format: "esm",
 				incremental: !!this.watch,
-				plugins: [
-					{
-						name: "make-all-packages-external",
-						setup: build => {
-							const filter = /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/ // Must not start with "/" or "./" or "../"
-							build.onResolve({ filter }, args => {
-								return {
-									path: args.path,
-									external: true,
-								}
-							})
-						},
-					},
-					{
-						name: "list-dependencies",
-						setup: build => {
-							build.onLoad({ filter: /.*/ }, async ({ path }) => {
-								this.dependencies.push(path)
-								return null
-							})
-						},
-					},
-				],
+				plugins,
 				...(buildOptions ?? {}),
 				write: false,
 			})
@@ -114,7 +122,7 @@ export default class Runner {
 		commandArgs.push(
 			"--input-type=module",
 			"--eval",
-			code.replace(/'/g, "\\'"),
+			code,
 			"--",
 			this.inputFile,
 			...this.args

@@ -46,7 +46,9 @@ start(async ({ stage, same, test }) => {
 
 	stage("Inter process communication")
 	{
-		const runner = new Runner("test/ipc/child", { interProcessCommunication: true })
+		const runner = new Runner("test/ipc/child", {
+			interProcessCommunication: true,
+		})
 		await runner.build()
 		await runner.execute()
 		same(runner.output, "Hello", "process.send")

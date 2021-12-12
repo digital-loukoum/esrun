@@ -25,6 +25,7 @@ export default class Watcher extends Runner {
 			watch?: string[]
 			inspect?: boolean
 			interProcessCommunication?: boolean
+			makeAllPackagesExternal?: boolean
 		}
 	) {
 		super(input, options)
