@@ -1,5 +1,5 @@
-import Zabu from "./Zabu"
-import coco from "./coco"
+import Zabu from "~/Zabu"
+import coco from "~/coco"
 import ts from "typescript"
 import fsevents from "fsevents"
 import { bunker } from "@digitak/bunker"

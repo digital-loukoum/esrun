@@ -65,7 +65,7 @@ export default class Runner {
 			plugins.push({
 				name: "make-all-packages-external",
 				setup: build => {
-					const filter = /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/ // Must not start with "/" or "./" or "../"
+					const filter = /^[^.\/~$@]|^@[^\/]/ // Must not start with "/", ".", "~", "$" or "@/"
 					build.onResolve({ filter }, args => {
 						return {
 							path: args.path,
