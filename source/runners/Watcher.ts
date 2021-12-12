@@ -3,6 +3,7 @@ import { watch } from "chokidar"
 import type { FSWatcher } from "chokidar"
 import path from "path"
 import anymatch from "anymatch"
+import { Options } from "../types/Options"
 
 function debounce(func: Function, wait: number) {
 	let timeout: NodeJS.Timeout | null = null
@@ -18,16 +19,7 @@ export default class Watcher extends Runner {
 	protected watcher: FSWatcher | null = null
 	protected watch: string[] = []
 
-	constructor(
-		input: string,
-		options?: {
-			args?: string[]
-			watch?: string[]
-			inspect?: boolean
-			interProcessCommunication?: boolean
-			makeAllPackagesExternal?: boolean
-		}
-	) {
+	constructor(input: string, options?: Options) {
 		super(input, options)
 		this.watch =
 			options?.watch instanceof Array ? options.watch.map(glob => path.resolve(glob)) : []

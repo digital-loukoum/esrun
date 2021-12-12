@@ -1,22 +1,18 @@
 import Runner from "./runners/Runner"
 import Watcher from "./runners/Watcher"
+import { Options } from "./types/Options"
 
-export { Runner, Watcher, esrun }
+export { Runner, Watcher, esrun, Options }
 
 /**
  * Run any .ts or .js file
  */
-export default async function esrun(
-	inputFile: string,
-	args: string[] = [],
-	watch: boolean | string[] = false,
-	inspect = false
-) {
-	if (watch && inspect) {
+export default async function esrun(inputFile: string, options?: Options) {
+	if (options?.watch && options?.inspect) {
 		console.warn(
 			`--inspect and --watch options are not compatible together. Disabling watch mode.`
 		)
-		watch = false
+		options.watch = false
 	}
-	return new (watch ? Watcher : Runner)(inputFile, { args, watch, inspect }).run()
+	return new (options?.watch ? Watcher : Runner)(inputFile, options).run()
 }

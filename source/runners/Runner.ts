@@ -4,6 +4,7 @@ import addJsExtensions from "@digitak/grubber/library/utilities/addJsExtensions"
 import resolveDependency from "../tools/resolveDependency"
 import { ChildProcess, spawn } from "child_process"
 import findInputFile from "../tools/findInputFile"
+import { Options } from "../types/Options"
 
 export type BuildOutput =
 	| null
@@ -18,10 +19,13 @@ export default class Runner {
 	public stderr = ""
 	public outputCode = ""
 	public args: string[] = []
-	protected watch: boolean | string[] = false
-	protected inspect: boolean = false
-	protected interProcessCommunication = false
-	protected makeAllPackagesExternal = true
+
+	protected watch: boolean | string[]
+	protected inspect: boolean
+	protected interProcessCommunication
+	protected makeAllPackagesExternal
+	protected exitAfterExecution
+
 	protected buildOutput: BuildOutput = null
 	protected dependencies: string[] = []
 	protected childProcess?: ChildProcess
@@ -30,28 +34,24 @@ export default class Runner {
 		return this.dependencies
 	}
 
-	constructor(
-		inputFile: string,
-		options?: {
-			args?: string[]
-			watch?: boolean | string[]
-			inspect?: boolean
-			interProcessCommunication?: boolean
-			makeAllPackagesExternal?: boolean
-		}
-	) {
+	constructor(inputFile: string, options?: Options) {
 		this.inputFile = findInputFile(inputFile)
+
 		this.args = options?.args ?? []
 		this.watch = options?.watch ?? false
 		this.inspect = options?.inspect ?? false
 		this.interProcessCommunication = options?.interProcessCommunication ?? false
 		this.makeAllPackagesExternal = options?.makeAllPackagesExternal ?? true
+		this.exitAfterExecution = options?.exitAfterExecution ?? true
 	}
 
 	async run() {
 		try {
 			await this.build()
-			process.exit(await this.execute())
+			const status = await this.execute()
+			if (this.exitAfterExecution) {
+				process.exit(status)
+			}
 		} catch (error) {
 			console.error(error)
 			process.exit(1)

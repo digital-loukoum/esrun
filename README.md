@@ -149,10 +149,74 @@ The library exports a single function that you can use to programmatically execu
 ``` ts
 import esrun from '@digitak/esrun'
 
-esrun(
-   filePath: string,
-   argv: string[],
-   watch: boolean | string[] = false, // you can pass an array of globs to watch
-   inspect = false
-): unknown
+export async function esrun(filePath: string, options?: Options): Promise<void>
+
+export type Options = {
+   // arguments to pass to the script
+	args?: string[] = []
+
+   // if true, will reload the script on file changes
+   // you can also pass an additional array of globs to watch
+	watch?: boolean | string[] = false
+	
+   // if true, turn on inspect mode to use browser's console
+   inspect?: boolean = false
+
+   // if false, external packages will be bundled
+	makeAllPackagesExternal?: boolean = true
+
+   // if false, process.exit() won't be called after execution
+	exitAfterExecution?: boolean = true
+
+   // enable use of process.send() from the children
+	interProcessCommunication?: boolean = false
+}
+```
+
+### Create a new runner to get / transform generated code
+
+To have full control, you can create your own script runner instance:
+
+```ts
+import { Runner } from '@digitak/esrun'
+
+const runner = new Runner(inputFile: string, options?: Options)
+
+// build the given file and all its dependencies
+await runner.build(buildOptions?: BuildOptions)
+
+// you can see what the generated code is
+console.log("Generated javascript code:", runner.outputCode)
+
+// you can apply transformations to the code
+await runner.transform(code => `console.log('Hello world!');\n` + code)
+
+// then execute the build and return the given status
+const status = await runner.execute()
+```
+
+### Receive data
+
+You can receive data from a script you executed by turning on the option `interProcessCommunication`.
+
+When the option is on, the script will be able to call [process.send(message: string)](https://nodejs.org/api/process.html#processsendmessage-sendhandle-options-callback).
+
+At the end of the execution, the sent messages will be disponible through `runner.output`.
+
+Let's suppose you have the following file `helloWorld.ts`:
+
+```ts
+// helloWorld.ts
+process.send('Hello world')
+```
+
+Then you can receive data fro this script this way:
+
+```ts
+const runner = new Runner('helloWorld.ts', { interProcessCommunication: true })
+
+await runner.execute({ exitAfterExecution: false })
+
+console.log("Received data:", runner.output)
+// should log 'Received data: Hello world'
 ```
