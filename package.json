@@ -7,6 +7,11 @@
 		"library/**/*"
 	],
 	"main": "library/main.js",
+	"exports": {
+		".": "./library/main.js",
+		"./library/*": "./library/*",
+		"./*": "./library/*"
+	},
 	"bin": {
 		"esrun": "library/bin.js"
 	},
