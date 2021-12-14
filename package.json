@@ -1,6 +1,6 @@
 {
 	"name": "@digitak/esrun",
-	"version": "3.0.3",
+	"version": "3.1.0",
 	"type": "module",
 	"description": "Execute directly your Typescript files using Esbuild",
 	"files": [
@@ -9,8 +9,8 @@
 	"main": "library/main.js",
 	"exports": {
 		".": "./library/main.js",
-		"./library/*": "./library/*",
-		"./*": "./library/*"
+		"./library/*": "./library/*.js",
+		"./*": "./library/*.js"
 	},
 	"bin": {
 		"esrun": "library/bin.js"
@@ -47,8 +47,7 @@
 	},
 	"homepage": "https://github.com/digital-loukoum/esrun#readme",
 	"dependencies": {
-		"@digitak/grubber": "^2.0.4",
-		"@digitak/tsc-esm": "^2.0.3",
+		"@digitak/grubber": "^3.0.2",
 		"@types/chokidar": "^2.1.3",
 		"anymatch": "^3.1.2",
 		"chokidar": "^3.5.1",
@@ -56,6 +55,7 @@
 	},
 	"devDependencies": {
 		"@digitak/bunker": "^3.0.5",
+		"@digitak/tsc-esm": "^3.0.1",
 		"@types/node": "^14.14.20",
 		"cute-print": "^1.0.4",
 		"fartest": "^2.1.6",
