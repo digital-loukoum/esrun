@@ -7,6 +7,8 @@ import { bunkerFile } from "@digitak/bunker/library/io"
 import start from "fartest"
 import print from "cute-print"
 import Runner from "../source/runners/Runner"
+import dotImport from "./dotImport/dotImport"
+import doubleDotImport from "./dotImport/doubleDotImport"
 
 start(async ({ stage, same, test }) => {
 	stage("CLI arguments received")
@@ -35,6 +37,12 @@ start(async ({ stage, same, test }) => {
 
 	stage("Import another custom typescript file")
 	same(coco, 11)
+
+	stage("import '.' syntax")
+	same(dotImport, 12)
+
+	stage("import '..' syntax")
+	same(doubleDotImport, 12)
 
 	stage("Use transformer")
 	{
