@@ -1,6 +1,6 @@
 {
 	"name": "@digitak/esrun",
-	"version": "3.1.0",
+	"version": "3.1.1",
 	"type": "module",
 	"description": "Execute directly your Typescript files using Esbuild",
 	"files": [
@@ -54,7 +54,7 @@
 		"esbuild": "^0.12.4"
 	},
 	"devDependencies": {
-		"@digitak/bunker": "^3.0.5",
+		"@digitak/bunker": "^3.2.1",
 		"@digitak/tsc-esm": "^3.0.1",
 		"@types/node": "^14.14.20",
 		"cute-print": "^1.0.4",
