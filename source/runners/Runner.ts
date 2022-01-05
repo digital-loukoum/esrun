@@ -1,7 +1,5 @@
 import { build, BuildOptions, Plugin } from "esbuild"
 import type { BuildResult, OutputFile } from "esbuild"
-import addJsExtensions from "@digitak/grubber/library/utilities/addJsExtensions"
-import resolveDependency from "../tools/resolveDependency"
 import { ChildProcess, spawn } from "child_process"
 import findInputFile from "../tools/findInputFile"
 import { Options } from "../types/Options"
@@ -111,7 +109,7 @@ export default class Runner {
 	async execute(): Promise<number> {
 		this.output = this.stdout = this.stderr = ""
 		if (!this.buildOutput) return 1
-		let code = addJsExtensions(this.outputCode, resolveDependency)
+		let code = this.outputCode
 
 		const commandArgs = []
 		if (this.inspect) {
