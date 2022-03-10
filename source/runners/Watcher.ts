@@ -21,13 +21,16 @@ export default class Watcher extends Runner {
 
 	constructor(input: string, options?: Options) {
 		super(input, options)
+		this.preserveConsole = options?.preserveConsole ?? false
 		this.watch =
 			options?.watch instanceof Array ? options.watch.map(glob => path.resolve(glob)) : []
 	}
 
 	async run() {
 		try {
-			console.clear()
+			if(!this.preserveConsole){
+				console.clear()
+			}
 			await this.build()
 			this.execute()
 			this.watcher = watch([...this.dependencies, "package.json", ...this.watch])
@@ -73,7 +76,9 @@ export default class Watcher extends Runner {
 	}
 
 	async rebuild() {
-		console.clear()
+		if(!this.preserveConsole){
+			console.clear()
+		}
 		this.dependencies.length = 0
 		if (this.buildOutput) {
 			try {

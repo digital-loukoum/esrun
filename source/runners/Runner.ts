@@ -20,6 +20,7 @@ export default class Runner {
 
 	protected watch: boolean | string[]
 	protected inspect: boolean
+	protected preserveConsole: boolean
 	protected interProcessCommunication
 	protected makeAllPackagesExternal
 	protected exitAfterExecution
@@ -38,6 +39,7 @@ export default class Runner {
 		this.args = options?.args ?? []
 		this.watch = options?.watch ?? false
 		this.inspect = options?.inspect ?? false
+		this.preserveConsole = options?.preserveConsole ?? false
 		this.interProcessCommunication = options?.interProcessCommunication ?? false
 		this.makeAllPackagesExternal = options?.makeAllPackagesExternal ?? true
 		this.exitAfterExecution = options?.exitAfterExecution ?? true

@@ -1,1 +1,1 @@
-export type ExecutionMode = "watch" | "inspect"
+export type ExecutionMode = "watch" | "inspect" | "preserveConsole"

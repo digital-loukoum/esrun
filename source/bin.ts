@@ -9,11 +9,14 @@ const argumentOptions: Record<string, ExecutionMode> = {
 	"-w": "watch",
 	"--inspect": "inspect",
 	"-i": "inspect",
+  	"-p": "preserveConsole",
+  	"--preserveConsole": "preserveConsole",	
 }
 
 const options: Record<ExecutionMode, boolean | string[]> = {
 	watch: false,
 	inspect: false,
+  	preserveConsole: false,
 }
 
 let argsOffset = 2
@@ -35,4 +38,5 @@ esrun(argv[argsOffset], {
 	args: argv.slice(argsOffset + 1),
 	watch: options.watch,
 	inspect: !!options.inspect,
+  	preserveConsole: !!options.preserveConsole,
 })

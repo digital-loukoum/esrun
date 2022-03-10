@@ -114,6 +114,13 @@ In case of troubleshooting, read the [node documentation](https://nodejs.org/en/
 
 > Inspect and watch mode are alas not compatible yet.
 
+### Preserve Console Output
+
+If you don't want the console cleared in watch mode for each console update, use the following flag:
+
+```shell
+esrun --watch foo.ts --preserveConsole
+```
 
 ### Importing a CJS module
 
