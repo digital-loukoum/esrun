@@ -61,4 +61,16 @@ start(async ({ stage, same, test }) => {
 		await runner.execute()
 		same(runner.output, "Hello", "process.send")
 	}
+
+	stage("Build events")
+	{
+		const messages = <string[]>[]
+		const runner = new Runner("test/coco", {
+			beforeRun: () => messages.push("beforeRun"),
+			afterRun: () => messages.push("afterRun"),
+		})
+		await runner.build()
+		await runner.execute()
+		same(messages, ["beforeRun", "afterRun"])
+	}
 })

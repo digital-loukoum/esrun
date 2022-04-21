@@ -166,7 +166,10 @@ export type Options = {
    // if true, will reload the script on file changes
    // you can also pass an additional array of globs to watch
 	watch?: boolean | string[] = false
-	
+
+   // if true, prevent console clearing on watch mode
+	preserveConsole?: boolean
+
    // if true, turn on inspect mode to use browser's console
    inspect?: boolean = false
 
@@ -178,6 +181,12 @@ export type Options = {
 
    // enable use of process.send() from the children
 	interProcessCommunication?: boolean = false
+
+   // executed before the code is executed (after the build)
+   beforeRun?: () => unknown
+
+   // executed after the code is executed
+   afterRun?: () => unknown
 }
 ```
 

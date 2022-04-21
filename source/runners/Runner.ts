@@ -17,9 +17,11 @@ export default class Runner {
 	public stderr = ""
 	public outputCode = ""
 	public args: string[] = []
+	public preserveConsole: boolean
+	public beforeRun: Options["beforeRun"]
+	public afterRun: Options["afterRun"]
 
 	protected watch: boolean | string[]
-	protected preserveConsole: boolean
 	protected inspect: boolean
 	protected interProcessCommunication
 	protected makeAllPackagesExternal
@@ -43,6 +45,8 @@ export default class Runner {
 		this.interProcessCommunication = options?.interProcessCommunication ?? false
 		this.makeAllPackagesExternal = options?.makeAllPackagesExternal ?? true
 		this.exitAfterExecution = options?.exitAfterExecution ?? true
+		this.beforeRun = options?.beforeRun
+		this.afterRun = options?.afterRun
 	}
 
 	async run() {
@@ -111,6 +115,7 @@ export default class Runner {
 	async execute(): Promise<number> {
 		this.output = this.stdout = this.stderr = ""
 		if (!this.buildOutput) return 1
+		await this.beforeRun?.()
 		let code = this.outputCode
 
 		const commandArgs = []
@@ -147,10 +152,15 @@ export default class Runner {
 			}
 
 			return new Promise(resolve => {
-				this.childProcess?.on("close", code => resolve(code || 0))
-				this.childProcess?.on("error", error => {
+				const done = async (code?: number) => {
+					await this.afterRun?.()
+					resolve(code ?? 0)
+				}
+
+				this.childProcess?.on("close", done)
+				this.childProcess?.on("error", async error => {
 					console.error(error)
-					return resolve(1)
+					done(1)
 				})
 			})
 		} catch (error) {

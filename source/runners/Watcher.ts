@@ -45,7 +45,6 @@ export default class Watcher extends Runner {
 			this.childProcess = undefined
 		}
 		await this.rebuild()
-		this.execute()
 
 		// we update the list of watched files
 		if (this.buildOutput) {
@@ -65,11 +64,14 @@ export default class Watcher extends Runner {
 				}
 			}
 
-			for (const dependency of this.dependencies)
+			for (const dependency of this.dependencies) {
 				if (!watchedDependencies.includes(dependency)) {
 					watcher.add(dependency)
 				}
+			}
 		}
+
+		await this.execute()
 	}
 
 	async rebuild() {
@@ -77,6 +79,7 @@ export default class Watcher extends Runner {
 			console.clear()
 		}
 		this.dependencies.length = 0
+
 		if (this.buildOutput) {
 			try {
 				this.buildOutput = (await this.buildOutput.rebuild!()) as BuildOutput
