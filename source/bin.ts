@@ -21,6 +21,11 @@ const options: Record<CliOption, boolean | string[]> = {
 let argsOffset = 2
 let argument: string
 
+if (argv.length < argsOffset) {
+	console.log("Missing typescript input file")
+	process.exit(0)
+}
+
 while ((argument = argv[argsOffset]).startsWith("-")) {
 	const [command, parameters] = argument.split(":")
 
@@ -38,4 +43,7 @@ esrun(argv[argsOffset], {
 	watch: options.watch,
 	inspect: !!options.inspect,
 	preserveConsole: !!options.preserveConsole,
+}).catch(error => {
+	console.error(error)
+	process.exit(1)
 })
