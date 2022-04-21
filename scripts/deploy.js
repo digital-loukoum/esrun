@@ -8,7 +8,7 @@ execSync(`git add .`)
 execSync(`git commit -m "📌 Version ${version}"`)
 execSync(`git push`)
 
-import "./build"
+import "./build.js"
 
 console.log(`Starting deploy...`)
 
