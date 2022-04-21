@@ -14,7 +14,7 @@
 	"scripts": {
 		"lint": "tsc --noEmit",
 		"build": "node scripts/build.js",
-		"deploy": "yarn build && yarn test && yarn publish",
+		"deploy": "node scripts/deploy.js",
 		"test": "./package/bin.js test --watch coco",
 		"test:run": "./package/bin.js test --watch coco",
 		"test:watch": "./package/bin.js --watch:test/*.json test --watch coco",
