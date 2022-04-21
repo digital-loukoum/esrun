@@ -1,17 +1,17 @@
-import { compile, patch } from "@digitak/tsc-esm"
-import { rmSync, chmodSync } from "fs"
+import { execSync } from "child_process"
+import { rmSync, chmodSync, copyFileSync } from "fs"
 
 console.log("Cleaning library...")
-rmSync("library", { recursive: true, force: true })
+rmSync("package", { recursive: true, force: true })
 
 console.log("Compiling typescript...")
-compile()
+execSync("tsc", { stdio: "inherit" })
 
-console.log("Patching imports...")
-patch([
-	{ find: /^chokidar$/, replacement: null },
-])
+console.log("Copying configuration files...")
+copyFileSync("./README.md", "./package/README.md")
+copyFileSync("./package.json", "./package/package.json")
 
 console.log("Making binary executable...")
-chmodSync("library/bin.js", 0o775)
+chmodSync("package/bin.js", 0o775)
 
+console.log("✨ Build done\n")

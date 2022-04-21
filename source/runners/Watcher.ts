@@ -1,9 +1,9 @@
-import Runner, { BuildOutput } from "./Runner"
+import Runner, { BuildOutput } from "./Runner.js"
 import { watch } from "chokidar"
 import type { FSWatcher } from "chokidar"
 import path from "path"
 import anymatch from "anymatch"
-import { Options } from "../types/Options"
+import { Options } from "../types/Options.js"
 
 function debounce(func: Function, wait: number) {
 	let timeout: NodeJS.Timeout | null = null
@@ -58,7 +58,7 @@ export default class Watcher extends Runner {
 			for (const dependency of watchedDependencies) {
 				if (
 					dependency != packageFile &&
-					!anymatch(this.watch, dependency) &&
+					!(anymatch as any)(this.watch, dependency) &&
 					!this.dependencies.includes(dependency)
 				) {
 					watcher.unwatch(dependency)
@@ -73,7 +73,9 @@ export default class Watcher extends Runner {
 	}
 
 	async rebuild() {
-		console.clear()
+		if (!this.preserveConsole) {
+			console.clear()
+		}
 		this.dependencies.length = 0
 		if (this.buildOutput) {
 			try {

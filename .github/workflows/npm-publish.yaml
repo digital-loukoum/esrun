@@ -1,0 +1,70 @@
+name: NPM Package
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+
+      # install dependencies
+      - uses: actions/cache@v2
+        id: pnpm-cache
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-modules-${{ matrix.node-version }}-${{ hashFiles('**/package.json') }}
+      - name: Install dependencies
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.30.1
+          run_install: true
+
+      # build & test
+      - name: Build
+        run: npm run build # TODO: Change "build" to "test" when tests are ready
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+  publish:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+
+      # install dependencies
+      - uses: actions/cache@v2
+        id: pnpm-cache
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-modules-${{ matrix.node-version }}-${{ hashFiles('**/package.json') }}
+      - name: Install dependencies
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.30.1
+          run_install: true
+
+      # setup git config (for auto-version bumping)
+      - name: Setup git config
+        run: |
+          git config user.name "GitHub actions"
+          git config user.email "<>"
+
+      # deploy to npm
+      - name: Deploy
+        run: npm run deploy
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

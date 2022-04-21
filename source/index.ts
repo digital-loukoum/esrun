@@ -1,6 +1,6 @@
-import Runner from "./runners/Runner"
-import Watcher from "./runners/Watcher"
-import { Options } from "./types/Options"
+import Runner from "./runners/Runner.js"
+import Watcher from "./runners/Watcher.js"
+import { Options } from "./types/Options.js"
 
 export { Runner, Watcher, esrun, Options }
 

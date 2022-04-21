@@ -1,8 +1,8 @@
 import { build, BuildOptions, Plugin } from "esbuild"
 import type { BuildResult, OutputFile } from "esbuild"
 import { ChildProcess, spawn } from "child_process"
-import findInputFile from "../tools/findInputFile"
-import { Options } from "../types/Options"
+import findInputFile from "../tools/findInputFile.js"
+import { Options } from "../types/Options.js"
 
 export type BuildOutput =
 	| null
@@ -19,6 +19,7 @@ export default class Runner {
 	public args: string[] = []
 
 	protected watch: boolean | string[]
+	protected preserveConsole: boolean
 	protected inspect: boolean
 	protected interProcessCommunication
 	protected makeAllPackagesExternal
@@ -37,6 +38,7 @@ export default class Runner {
 
 		this.args = options?.args ?? []
 		this.watch = options?.watch ?? false
+		this.preserveConsole = options?.preserveConsole ?? false
 		this.inspect = options?.inspect ?? false
 		this.interProcessCommunication = options?.interProcessCommunication ?? false
 		this.makeAllPackagesExternal = options?.makeAllPackagesExternal ?? true

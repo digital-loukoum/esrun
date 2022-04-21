@@ -3,29 +3,26 @@
 	"version": "3.1.2",
 	"type": "module",
 	"description": "Execute directly your Typescript files using Esbuild",
-	"files": [
-		"library/**/*"
-	],
-	"main": "library/main.js",
+	"main": "./index.js",
 	"exports": {
-		".": "./library/main.js",
-		"./library/*": "./library/*.js",
-		"./*": "./library/*.js"
+		".": "./index.js",
+		"./*": "./*.js"
 	},
 	"bin": {
-		"esrun": "library/bin.js"
+		"esrun": "./bin.js"
 	},
 	"scripts": {
 		"lint": "tsc --noEmit",
 		"build": "node scripts/build.js",
 		"deploy": "yarn build && yarn test && yarn publish",
-		"test": "./library/bin.js test --watch coco",
-		"test:run": "./library/bin.js test --watch coco",
-		"test:watch": "./library/bin.js --watch:test/*.json test --watch coco",
-		"test:inspect": "./library/bin.js --inspect test --watch coco",
-		"test:watch:inspect": "./library/bin.js --watch --inspect test --watch coco",
-		"test:server": "./library/bin.js --watch test/server",
-		"test:ipc": "./library/bin.js test/ipc"
+		"test": "./package/bin.js test --watch coco",
+		"test:run": "./package/bin.js test --watch coco",
+		"test:watch": "./package/bin.js --watch:test/*.json test --watch coco",
+		"test:watch:preserve": "./package/bin.js --preserveConsole --watch:test/*.json test --watch coco",
+		"test:inspect": "./package/bin.js --inspect test --watch coco",
+		"test:watch:inspect": "./package/bin.js --watch --inspect test --watch coco",
+		"test:server": "./package/bin.js --watch test/server",
+		"test:ipc": "./package/bin.js test/ipc"
 	},
 	"engines": {
 		"node": ">=14.0"
@@ -53,12 +50,11 @@
 	},
 	"devDependencies": {
 		"@digitak/bunker": "^3.2.1",
-		"@digitak/tsc-esm": "^3.0.1",
 		"@types/node": "^14.14.20",
 		"cute-print": "^1.0.4",
 		"fartest": "^2.1.6",
 		"fsevents": "^2.3.2",
 		"polka": "^0.5.2",
-		"typescript": "^4.3.2"
+		"typescript": "^4.7.0-dev.20220421"
 	}
 }

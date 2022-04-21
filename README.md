@@ -94,6 +94,14 @@ You can use several globs separated by a comma (but no space):
 esrun --watch:src/*.json,test/*.json foo.ts
 ```
 
+#### Preventing console clearing
+
+In watch mode, every file change will trigger a console clearing. You can disable this behavior with the `--preserveConsole` option:
+
+```shell
+esrun --watch --preserveConsole foo.ts
+```
+
 ### Inspect mode
 
 You can also execute **esrun** in inspect mode.

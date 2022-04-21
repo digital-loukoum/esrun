@@ -1,19 +1,21 @@
 #!/usr/bin/env node
-import esrun from "./main.js"
-import type { ExecutionMode } from "./types/ExecutionMode"
+import esrun from "./index.js"
+import { CliOption } from "./types/CliOption.js"
 
 const { argv } = process
 
-const argumentOptions: Record<string, ExecutionMode> = {
+const argumentOptions: Record<string, CliOption> = {
 	"--watch": "watch",
 	"-w": "watch",
 	"--inspect": "inspect",
 	"-i": "inspect",
+	"--preserveConsole": "preserveConsole",
 }
 
-const options: Record<ExecutionMode, boolean | string[]> = {
+const options: Record<CliOption, boolean | string[]> = {
 	watch: false,
 	inspect: false,
+	preserveConsole: false,
 }
 
 let argsOffset = 2
@@ -35,4 +37,5 @@ esrun(argv[argsOffset], {
 	args: argv.slice(argsOffset + 1),
 	watch: options.watch,
 	inspect: !!options.inspect,
+	preserveConsole: !!options.preserveConsole,
 })
