@@ -1,3 +1,6 @@
+## 3.2.4
+- Add support for file constants `__dirname` and `__filename`
+
 ## 3.2.3
 - Add a message when calling cli with no arguments
 - Cli now catches esrun errors and log them instead of throwing

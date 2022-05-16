@@ -173,6 +173,10 @@ export type Options = {
    // if true, turn on inspect mode to use browser's console
    inspect?: boolean = false
 
+   // if false, do not transform __dirname and __filename
+   // (the CLI option to disable file constants is --noFileConstants)
+	fileConstants?: boolean = true
+
    // if false, external packages will be bundled
 	makeAllPackagesExternal?: boolean = true
 
