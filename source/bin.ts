@@ -10,14 +10,14 @@ const argumentOptions: Record<string, CliOption> = {
 	"--inspect": "inspect",
 	"-i": "inspect",
 	"--preserveConsole": "preserveConsole",
-	"--fileConstants": "fileConstants",
+	"--noFileConstants": "noFileConstants",
 }
 
 const options: Record<CliOption, boolean | string[]> = {
 	watch: false,
 	inspect: false,
 	preserveConsole: false,
-	fileConstants: true,
+	noFileConstants: false,
 }
 
 let argsOffset = 2
@@ -45,6 +45,7 @@ esrun(argv[argsOffset], {
 	watch: options.watch,
 	inspect: !!options.inspect,
 	preserveConsole: !!options.preserveConsole,
+	fileConstants: !options.noFileConstants,
 }).catch(error => {
 	console.error(error)
 	process.exit(1)
