@@ -6,6 +6,7 @@ export type Options = {
 	interProcessCommunication?: boolean
 	makeAllPackagesExternal?: boolean
 	exitAfterExecution?: boolean
+	fileConstants?: boolean
 	beforeRun?: () => unknown
 	afterRun?: () => unknown
 }

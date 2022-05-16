@@ -10,12 +10,14 @@ const argumentOptions: Record<string, CliOption> = {
 	"--inspect": "inspect",
 	"-i": "inspect",
 	"--preserveConsole": "preserveConsole",
+	"--fileConstants": "fileConstants",
 }
 
 const options: Record<CliOption, boolean | string[]> = {
 	watch: false,
 	inspect: false,
 	preserveConsole: false,
+	fileConstants: true,
 }
 
 let argsOffset = 2

@@ -3,6 +3,8 @@ import type { BuildResult, OutputFile } from "esbuild"
 import { ChildProcess, spawn } from "child_process"
 import findInputFile from "../tools/findInputFile.js"
 import { Options } from "../types/Options.js"
+import { fileConstantsPlugin } from "../plugins/fileConstants.js"
+import { makePackagesExternalPlugin } from "../plugins/makePackagesExternal.js"
 
 export type BuildOutput =
 	| null
@@ -18,6 +20,7 @@ export default class Runner {
 	public outputCode = ""
 	public args: string[] = []
 	public preserveConsole: boolean
+	public fileConstants: boolean
 	public beforeRun: Options["beforeRun"]
 	public afterRun: Options["afterRun"]
 
@@ -42,6 +45,7 @@ export default class Runner {
 		this.watch = options?.watch ?? false
 		this.preserveConsole = options?.preserveConsole ?? false
 		this.inspect = options?.inspect ?? false
+		this.fileConstants = options?.fileConstants ?? true
 		this.interProcessCommunication = options?.interProcessCommunication ?? false
 		this.makeAllPackagesExternal = options?.makeAllPackagesExternal ?? true
 		this.exitAfterExecution = options?.exitAfterExecution ?? true
@@ -65,19 +69,11 @@ export default class Runner {
 	async build(buildOptions?: BuildOptions) {
 		const plugins: Plugin[] = []
 
+		if (this.fileConstants) {
+			plugins.push(fileConstantsPlugin())
+		}
 		if (this.makeAllPackagesExternal) {
-			plugins.push({
-				name: "make-all-packages-external",
-				setup: build => {
-					const filter = /^[^.\/~$@]|^@[^\/]/ // Must not start with "/", ".", "~", "$" or "@/"
-					build.onResolve({ filter }, args => {
-						return {
-							path: args.path,
-							external: true,
-						}
-					})
-				},
-			})
+			plugins.push(makePackagesExternalPlugin())
 		}
 
 		plugins.push({

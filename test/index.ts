@@ -1,5 +1,5 @@
-import Zabu from "~/Zabu"
-import coco from "~/coco"
+import Zabu from "~/samples/Zabu"
+import coco from "~/samples/coco"
 import ts from "typescript"
 import fsevents from "fsevents"
 import { bunker } from "@digitak/bunker"
@@ -7,8 +7,8 @@ import { bunkerFile } from "@digitak/bunker/io"
 import start from "fartest"
 import print from "cute-print"
 import Runner from "../source/runners/Runner"
-import dotImport from "./dotImport/dotImport"
-import doubleDotImport from "./dotImport/doubleDotImport"
+import dotImport from "./samples/dotImport/dotImport"
+import doubleDotImport from "./samples/dotImport/doubleDotImport"
 
 start(async ({ stage, same, test }) => {
 	stage("CLI arguments received")
@@ -44,9 +44,21 @@ start(async ({ stage, same, test }) => {
 	stage("import '..' syntax")
 	same(doubleDotImport, 12)
 
+	stage("File constants")
+	{
+		const runner = new Runner("test/samples/fileConstants")
+		await runner.build()
+		test(
+			runner.outputCode.includes(
+				`["/Users/Lepzulnag/Code/esrun/test/samples", "/Users/Lepzulnag/Code/esrun/test/samples/fileConstants.ts", "__dirname", "__filename"]`
+			),
+			"__filename and __dirname are transformed"
+		)
+	}
+
 	stage("Use transformer")
 	{
-		const runner = new Runner("test/coco")
+		const runner = new Runner("test/samples/coco")
 		await runner.build()
 		await runner.transform(content => content.replace("11", "12"))
 		test(runner.outputCode.includes("12"), "Should export 12")
@@ -54,7 +66,7 @@ start(async ({ stage, same, test }) => {
 
 	stage("Inter process communication")
 	{
-		const runner = new Runner("test/ipc/child", {
+		const runner = new Runner("test/samples/ipc/child", {
 			interProcessCommunication: true,
 		})
 		await runner.build()
@@ -65,7 +77,7 @@ start(async ({ stage, same, test }) => {
 	stage("Build events")
 	{
 		const messages = <string[]>[]
-		const runner = new Runner("test/coco", {
+		const runner = new Runner("test/samples/coco", {
 			beforeRun: () => messages.push("beforeRun"),
 			afterRun: () => messages.push("afterRun"),
 		})

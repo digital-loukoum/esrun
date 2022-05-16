@@ -1,1 +1,1 @@
-export type CliOption = "watch" | "inspect" | "preserveConsole"
+export type CliOption = "watch" | "inspect" | "preserveConsole" | "fileConstants"

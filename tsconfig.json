@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"moduleResolution": "NodeNext",
+		"skipLibCheck": true,
 		"target": "es2020",
 		"lib": ["es2020", "dom"],
 		"module": "esnext",
