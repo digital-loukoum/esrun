@@ -64,6 +64,13 @@ Running `npm run test` will run the first file that exists in the following list
 - `/test/test.js`
 - `/test/main.js`
 
+### Custom tsconfig.json
+
+You can pass a custom path to your `tsconfig.json` file from the CLI:
+
+```
+esrun --tsconfig:/custom/path/to/tsconfig.json foo.ts
+```
 
 ### Watch mode
 

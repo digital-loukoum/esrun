@@ -7,6 +7,7 @@ export type Options = {
 	makeAllPackagesExternal?: boolean
 	exitAfterExecution?: boolean
 	fileConstants?: boolean
+	tsConfigFile?: string
 	beforeRun?: () => unknown
 	afterRun?: () => unknown
 }

@@ -1,1 +1,6 @@
-export type CliOption = "watch" | "inspect" | "preserveConsole" | "noFileConstants"
+export type CliOption =
+	| "watch"
+	| "inspect"
+	| "preserveConsole"
+	| "noFileConstants"
+	| "tsconfig"

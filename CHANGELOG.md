@@ -1,3 +1,6 @@
+## 3.2.5
+- Add `--tsconfig:path` cli option
+
 ## 3.2.4
 - Add support for file constants `__dirname` and `__filename`
 

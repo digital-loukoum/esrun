@@ -11,13 +11,15 @@ const argumentOptions: Record<string, CliOption> = {
 	"-i": "inspect",
 	"--preserveConsole": "preserveConsole",
 	"--noFileConstants": "noFileConstants",
+	"--tsconfig": "tsconfig",
 }
 
-const options: Record<CliOption, boolean | string[]> = {
+const options: Record<CliOption, boolean | string[] | undefined> = {
 	watch: false,
 	inspect: false,
 	preserveConsole: false,
 	noFileConstants: false,
+	tsconfig: undefined,
 }
 
 let argsOffset = 2
@@ -43,6 +45,12 @@ while ((argument = argv[argsOffset]).startsWith("-")) {
 esrun(argv[argsOffset], {
 	args: argv.slice(argsOffset + 1),
 	watch: options.watch,
+	tsConfigFile:
+		options.tsconfig instanceof Array
+			? options.tsconfig.join(",")
+			: typeof options.tsconfig == "boolean"
+			? undefined
+			: options.tsconfig,
 	inspect: !!options.inspect,
 	preserveConsole: !!options.preserveConsole,
 	fileConstants: !options.noFileConstants,

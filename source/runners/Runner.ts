@@ -19,6 +19,7 @@ export default class Runner {
 	public stderr = ""
 	public outputCode = ""
 	public args: string[] = []
+	public tsConfigFile: string | undefined
 	public preserveConsole: boolean
 	public fileConstants: boolean
 	public beforeRun: Options["beforeRun"]
@@ -46,6 +47,7 @@ export default class Runner {
 		this.preserveConsole = options?.preserveConsole ?? false
 		this.inspect = options?.inspect ?? false
 		this.fileConstants = options?.fileConstants ?? true
+		this.tsConfigFile = options?.tsConfigFile
 		this.interProcessCommunication = options?.interProcessCommunication ?? false
 		this.makeAllPackagesExternal = options?.makeAllPackagesExternal ?? true
 		this.exitAfterExecution = options?.exitAfterExecution ?? true
@@ -94,6 +96,7 @@ export default class Runner {
 				format: "esm",
 				incremental: !!this.watch,
 				plugins,
+				tsconfig: this.tsConfigFile,
 				...(buildOptions ?? {}),
 				write: false,
 			})
