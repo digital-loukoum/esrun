@@ -5,6 +5,7 @@ import findInputFile from "../tools/findInputFile.js"
 import { Options } from "../types/Options.js"
 import { fileConstantsPlugin } from "../plugins/fileConstants.js"
 import { makePackagesExternalPlugin } from "../plugins/makePackagesExternal.js"
+import path from "path"
 
 export type BuildOutput =
 	| null
@@ -37,6 +38,12 @@ export default class Runner {
 
 	getDependencies(): readonly string[] {
 		return this.dependencies
+	}
+
+	protected retrieveDependencies(): string[] {
+		return Object.keys(this.buildOutput?.metafile?.inputs ?? []).map(input =>
+			path.resolve(input)
+		)
 	}
 
 	constructor(inputFile: string, options?: Options) {
@@ -78,16 +85,6 @@ export default class Runner {
 			plugins.push(makePackagesExternalPlugin())
 		}
 
-		plugins.push({
-			name: "list-dependencies",
-			setup: build => {
-				build.onLoad({ filter: /.*/ }, async ({ path }) => {
-					this.dependencies.push(path)
-					return null
-				})
-			},
-		})
-
 		try {
 			this.buildOutput = await build({
 				entryPoints: [this.inputFile],
@@ -99,8 +96,10 @@ export default class Runner {
 				tsconfig: this.tsConfigFile,
 				...(buildOptions ?? {}),
 				write: false,
+				metafile: true,
 			})
 			this.outputCode = this.buildOutput?.outputFiles[0]?.text || ""
+			this.dependencies = this.retrieveDependencies()
 		} catch (error) {
 			this.buildOutput = null
 			this.outputCode = ""

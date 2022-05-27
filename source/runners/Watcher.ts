@@ -2,7 +2,6 @@ import Runner, { BuildOutput } from "./Runner.js"
 import { watch } from "chokidar"
 import type { FSWatcher } from "chokidar"
 import path from "path"
-import anymatch from "anymatch"
 import { Options } from "../types/Options.js"
 
 function debounce(func: Function, wait: number) {
@@ -48,27 +47,8 @@ export default class Watcher extends Runner {
 
 		// we update the list of watched files
 		if (this.buildOutput) {
-			const packageFile = path.resolve("package.json")
-			const watchedDependencies = []
-			for (const [directory, files] of Object.entries(watcher.getWatched())) {
-				watchedDependencies.push(...files.map(file => path.join(directory, file)))
-			}
-
-			for (const dependency of watchedDependencies) {
-				if (
-					dependency != packageFile &&
-					!(anymatch as any)(this.watch, dependency) &&
-					!this.dependencies.includes(dependency)
-				) {
-					watcher.unwatch(dependency)
-				}
-			}
-
-			for (const dependency of this.dependencies) {
-				if (!watchedDependencies.includes(dependency)) {
-					watcher.add(dependency)
-				}
-			}
+			void this.watcher.close()
+			this.watcher = watch([...this.dependencies, "package.json", ...this.watch])
 		}
 
 		await this.execute()
@@ -84,6 +64,7 @@ export default class Watcher extends Runner {
 			try {
 				this.buildOutput = (await this.buildOutput.rebuild!()) as BuildOutput
 				this.outputCode = this.buildOutput?.outputFiles[0]?.text || ""
+				this.dependencies = this.retrieveDependencies()
 			} catch (error) {
 				this.buildOutput = null
 				this.outputCode = ""

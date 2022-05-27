@@ -4,7 +4,6 @@ specifiers:
   '@digitak/bunker': ^3.2.1
   '@digitak/grubber': ^3.1.1
   '@types/node': ^14.14.20
-  anymatch: ^3.1.2
   chokidar: ^3.5.1
   cute-print: ^1.0.4
   esbuild: ^0.12.4
@@ -15,7 +14,6 @@ specifiers:
 
 dependencies:
   '@digitak/grubber': 3.1.1
-  anymatch: 3.1.2
   chokidar: 3.5.3
   esbuild: 0.12.29
 
