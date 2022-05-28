@@ -11,7 +11,7 @@ export const fileConstantsPlugin = (
 ): Plugin => ({
 	name: "fileConstants",
 	setup(build) {
-		build.onLoad({ filter: /.\.(js|ts|jsx|tsx)$/, namespace: "file" }, async options => {
+		build.onLoad({ filter: /.\.(c|m)?(js|ts)x?$/, namespace: "file" }, async options => {
 			const isWindows = /^win/.test(process.platform)
 			const escape = (path: string) => (isWindows ? path.replace(/\\/g, "/") : path)
 
@@ -24,9 +24,12 @@ export const fileConstantsPlugin = (
 				{ from: "__filename", to: `"${filename}"` }
 			)
 
+			let loader = path.extname(options.path).slice(1) as Loader
+			if (["m", "c"].includes(loader[0])) loader = loader.slice(1) as Loader
+
 			return {
 				contents,
-				loader: path.extname(options.path).slice(1) as Loader,
+				loader,
 			}
 		})
 	},

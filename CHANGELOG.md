@@ -1,3 +1,6 @@
+## 3.2.7
+- Fix `.mts` and `.cjs` extensions
+
 ## 3.2.6
 - Better file watching. Do not use custom plugin anymore but EsBuild's metafile
 - Remove unused dependency `anymatch`
