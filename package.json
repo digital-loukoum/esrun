@@ -16,7 +16,7 @@
 		"build": "node scripts/build.js",
 		"deploy": "node scripts/deploy.js",
 		"dev": "./package/bin.js --watch test --watch coco",
-		"test": "./package/bin.js test/index.mts --watch coco",
+		"test": "./package/bin.js test --watch coco",
 		"test:watch": "./package/bin.js --watch:test/*.json test --watch coco",
 		"test:watch:preserve": "./package/bin.js --preserveConsole --watch:test/*.json test --watch coco",
 		"test:inspect": "./package/bin.js --inspect test --watch coco",
