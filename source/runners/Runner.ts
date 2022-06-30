@@ -4,7 +4,6 @@ import { ChildProcess, spawn } from "child_process"
 import findInputFile from "../tools/findInputFile.js"
 import { Options } from "../types/Options.js"
 import { fileConstantsPlugin } from "../plugins/fileConstants.js"
-import { makePackagesExternalPlugin } from "../plugins/makePackagesExternal.js"
 import path from "path"
 
 export type BuildOutput =
@@ -77,12 +76,20 @@ export default class Runner {
 
 	async build(buildOptions?: BuildOptions) {
 		const plugins: Plugin[] = []
+		const external = []
 
 		if (this.fileConstants) {
 			plugins.push(fileConstantsPlugin())
 		}
 		if (this.makeAllPackagesExternal) {
-			plugins.push(makePackagesExternalPlugin())
+			external.push(
+				"./node_modules/*",
+				"../node_modules/*",
+				"../../node_modules/*",
+				"../../../node_modules/*",
+				"../../../../node_modules/*",
+				"../../../../../node_modules/*"
+			)
 		}
 
 		try {
@@ -94,6 +101,7 @@ export default class Runner {
 				incremental: !!this.watch,
 				plugins,
 				tsconfig: this.tsConfigFile,
+				external,
 				...(buildOptions ?? {}),
 				write: false,
 				metafile: true,

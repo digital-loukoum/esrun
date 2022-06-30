@@ -1,3 +1,6 @@
+## 3.2.8
+- New strategy to detect external dependencies. Now check if paths are inside a parent `node_modules` directory instead of checking if the import start with ".", "/", "~"n "@/" or "$". The previous strategy used to fail for typescript aliases that didn't start with "@/", "~" or "$".
+
 ## 3.2.7
 - Update EsBuild version to `0.14`
 

@@ -9,6 +9,7 @@ import print from "cute-print"
 import Runner from "../source/runners/Runner"
 import dotImport from "./samples/dotImport/dotImport"
 import doubleDotImport from "./samples/dotImport/doubleDotImport"
+import { foo } from "alias/foo"
 
 start(async ({ stage, same, test }) => {
 	stage("CLI arguments received")
@@ -84,5 +85,10 @@ start(async ({ stage, same, test }) => {
 		await runner.build()
 		await runner.execute()
 		same(messages, ["beforeRun", "afterRun"])
+	}
+
+	stage("alias")
+	{
+		same(foo, "foo", "resolved alias not treated as a dependency")
 	}
 })
