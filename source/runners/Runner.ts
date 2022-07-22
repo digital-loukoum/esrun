@@ -127,13 +127,14 @@ export default class Runner {
 		const commandArgs = []
 		if (this.inspect) {
 			commandArgs.push("--inspect")
-			code = `setTimeout(() => console.log("Process timeout"), 3_600_000);` + code
+			code = `setTimeout(() => console.log("Process timeout"), 3_600_000);\n` + code
 		}
+
+		code = `process.argv = [process.argv[0], ...process.argv.slice(3)];\n` + code
 
 		commandArgs.push(
 			"--input-type=module",
-			"--eval",
-			code,
+			"-",
 			"--",
 			this.inputFile,
 			...this.args
@@ -143,8 +144,13 @@ export default class Runner {
 			this.childProcess = spawn("node", commandArgs, {
 				stdio: this.interProcessCommunication
 					? ["pipe", "pipe", "pipe", "ipc"]
-					: "inherit",
+					: ["pipe", "inherit", "inherit"],
 			})
+			
+			// send the code to execute to the child process
+			this.childProcess.stdin?.write(code);
+			this.childProcess.stdin?.end();
+
 			if (this.interProcessCommunication) {
 				this.childProcess?.on("message", message => {
 					this.output += message.toString()
@@ -170,6 +176,7 @@ export default class Runner {
 				})
 			})
 		} catch (error) {
+			console.error(error)
 			return 1
 		}
 	}

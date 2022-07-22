@@ -248,3 +248,7 @@ await runner.execute({ exitAfterExecution: false })
 console.log("Received data:", runner.output)
 // should log 'Received data: Hello world'
 ```
+
+## Changelog
+
+The changelog is available [here](https://github.com/digital-loukoum/esrun/blob/main/CHANGELOG.md).
