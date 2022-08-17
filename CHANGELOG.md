@@ -1,5 +1,7 @@
 ## 3.2.10
-- Fix watcher that would not work after the first time
+- Fix file watching that would work only once on some OS
+- CLI arguments are passed using the '=' instead of ':' (the colon still work for retro compatibility)
+- You can now pass custom node's cli options by prefixing your option name with `--node-`. Example: `--node-max-old-space-size=4096`
 
 ## 3.2.9
 - Fix an error with Windows when passing the code to node. Using stdin now instead of a cli argument. (thanks to **@vendethiel** for the fix)

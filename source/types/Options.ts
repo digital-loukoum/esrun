@@ -1,3 +1,5 @@
+import { Parameter } from "./Parameter.js"
+
 export type Options = {
 	args?: string[]
 	watch?: boolean | string[]
@@ -10,4 +12,5 @@ export type Options = {
 	tsConfigFile?: string
 	beforeRun?: () => unknown
 	afterRun?: () => unknown
+	nodeOptions?: Record<string, Parameter>
 }

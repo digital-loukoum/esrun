@@ -69,7 +69,7 @@ Running `npm run test` will run the first file that exists in the following list
 You can pass a custom path to your `tsconfig.json` file from the CLI:
 
 ```
-esrun --tsconfig:/custom/path/to/tsconfig.json foo.ts
+esrun --tsconfig=/custom/path/to/tsconfig.json foo.ts
 ```
 
 ### Watch mode
@@ -90,7 +90,7 @@ This feature is very useful when you are doing test-driven development. You can 
 You may want to watch other files than your code files. For example, if you load data from a configuration file. In this case you can specify a glob (or a list of globs) that have to be watched:
 
 ```shell
-esrun --watch:src/*.json foo.ts
+esrun --watch=src/*.json foo.ts
 ```
 
 Then any `json` file in the `src/`folder will re-trigger the run.
@@ -98,7 +98,7 @@ Then any `json` file in the `src/`folder will re-trigger the run.
 You can use several globs separated by a comma (but no space):
 
 ```shell
-esrun --watch:src/*.json,test/*.json foo.ts
+esrun --watch=src/*.json,test/*.json foo.ts
 ```
 
 #### Preventing console clearing
@@ -129,6 +129,17 @@ In case of troubleshooting, read the [node documentation](https://nodejs.org/en/
 
 > Inspect and watch mode are alas not compatible yet.
 
+
+### Other node cli options
+
+`esrun` uses esbuild to transform Typescript to Javascript, and then Node to execute it.
+
+You can pass custom options to the node cli by prefixing the option name with "--node", like this:
+
+```
+esrun --node-max-old-space-size=4096 foo.ts
+esrun --node-no-warnings foo.ts
+```
 
 ### Importing a CJS module
 
@@ -192,6 +203,9 @@ export type Options = {
 
    // enable use of process.send() from the children
 	interProcessCommunication?: boolean = false
+
+   // additional options to pass to node's cli
+	nodeOptions?: Record<string, Parameter> = {}
 
    // executed before the code is executed (after the build)
    beforeRun?: () => unknown

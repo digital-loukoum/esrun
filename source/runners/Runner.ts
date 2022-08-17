@@ -24,6 +24,7 @@ export default class Runner {
 	public fileConstants: boolean
 	public beforeRun: Options["beforeRun"]
 	public afterRun: Options["afterRun"]
+	public nodeOptions: Options["nodeOptions"] = {}
 
 	protected watched: boolean | string[]
 	protected inspect: boolean
@@ -59,6 +60,7 @@ export default class Runner {
 		this.exitAfterExecution = options?.exitAfterExecution ?? true
 		this.beforeRun = options?.beforeRun
 		this.afterRun = options?.afterRun
+		this.nodeOptions = options?.nodeOptions ?? {}
 	}
 
 	async run() {
@@ -124,7 +126,17 @@ export default class Runner {
 		await this.beforeRun?.()
 		let code = this.outputCode
 
-		const commandArgs = []
+		let commandArgs: string[] = []
+
+		for (const nodeOption in this.nodeOptions) {
+			let argument = `--${nodeOption}`
+			const parameters = this.nodeOptions[nodeOption]
+			if (Array.isArray(parameters)) {
+				argument += `=${parameters.join(",")}`
+			}
+			commandArgs.push(argument)
+		}
+
 		if (this.inspect) {
 			commandArgs.push("--inspect")
 			code = `setTimeout(() => console.log("Process timeout"), 3_600_000);\n` + code

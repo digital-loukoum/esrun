@@ -17,12 +17,12 @@
 		"deploy": "node scripts/deploy.js",
 		"dev": "./package/bin.js --watch test --watch coco",
 		"test": "./package/bin.js test --watch coco",
-		"test:watch": "./package/bin.js --watch:test/*.json test --watch coco",
-		"test:watch:preserve": "./package/bin.js --preserveConsole --watch:test/*.json test --watch coco",
+		"test:node-cli": "./package/bin.js --node-max-old-space-size=4096 test --watch coco",
+		"test:watch": "./package/bin.js --watch=test/*.json test --watch coco",
+		"test:watch:preserve": "./package/bin.js --preserveConsole --watch=test/*.json test --watch coco",
 		"test:inspect": "./package/bin.js --inspect test --watch coco",
 		"test:watch:inspect": "./package/bin.js --watch --inspect test --watch coco",
-		"test:server": "./package/bin.js --watch test/server",
-		"test:ipc": "./package/bin.js test/ipc"
+		"test:server": "./package/bin.js --watch test/server"
 	},
 	"engines": {
 		"node": ">=14.0"
