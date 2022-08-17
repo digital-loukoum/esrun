@@ -16,11 +16,11 @@ function debounce(func: Function, wait: number) {
 
 export default class Watcher extends Runner {
 	protected watcher: FSWatcher | null = null
-	protected watch: string[] = []
+	protected watched: string[] = []
 
 	constructor(input: string, options?: Options) {
 		super(input, options)
-		this.watch =
+		this.watched =
 			options?.watch instanceof Array ? options.watch.map(glob => path.resolve(glob)) : []
 	}
 
@@ -29,15 +29,12 @@ export default class Watcher extends Runner {
 			console.clear()
 			await this.build()
 			this.execute()
-			this.watcher = watch([...this.dependencies, "package.json", ...this.watch])
-			this.watcher.on("change", debounce(this.rerun.bind(this), 300))
-			this.watcher.on("unlink", debounce(this.rerun.bind(this), 300))
+			this.watch()
 		} catch (error) {}
 	}
 
 	async rerun() {
 		if (!this.watcher) throw `Cannot re-run before a first run`
-		const { watcher } = this
 
 		if (this.childProcess) {
 			this.childProcess?.kill("SIGINT")
@@ -47,8 +44,7 @@ export default class Watcher extends Runner {
 
 		// we update the list of watched files
 		if (this.buildOutput) {
-			void this.watcher.close()
-			this.watcher = watch([...this.dependencies, "package.json", ...this.watch])
+			this.watch()
 		}
 
 		await this.execute()
@@ -72,5 +68,12 @@ export default class Watcher extends Runner {
 		} else {
 			await this.build()
 		}
+	}
+
+	watch() {
+		void this.watcher?.close()
+		this.watcher = watch([...this.dependencies, "package.json", ...this.watched])
+		this.watcher.on("change", debounce(this.rerun.bind(this), 300))
+		this.watcher.on("unlink", debounce(this.rerun.bind(this), 300))
 	}
 }

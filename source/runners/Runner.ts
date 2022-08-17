@@ -25,7 +25,7 @@ export default class Runner {
 	public beforeRun: Options["beforeRun"]
 	public afterRun: Options["afterRun"]
 
-	protected watch: boolean | string[]
+	protected watched: boolean | string[]
 	protected inspect: boolean
 	protected interProcessCommunication
 	protected makeAllPackagesExternal
@@ -49,7 +49,7 @@ export default class Runner {
 		this.inputFile = findInputFile(inputFile)
 
 		this.args = options?.args ?? []
-		this.watch = options?.watch ?? false
+		this.watched = options?.watch ?? false
 		this.preserveConsole = options?.preserveConsole ?? false
 		this.inspect = options?.inspect ?? false
 		this.fileConstants = options?.fileConstants ?? true
@@ -98,7 +98,7 @@ export default class Runner {
 				bundle: true,
 				platform: "node",
 				format: "esm",
-				incremental: !!this.watch,
+				incremental: !!this.watched,
 				plugins,
 				tsconfig: this.tsConfigFile,
 				external,

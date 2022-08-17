@@ -1,3 +1,6 @@
+## 3.2.10
+- Fix watcher that would not work after the first time
+
 ## 3.2.9
 - Fix an error with Windows when passing the code to node. Using stdin now instead of a cli argument. (thanks to **@vendethiel** for the fix)
 - Remove error swallowing that could happen when the node process itself crashes
