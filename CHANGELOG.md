@@ -1,3 +1,7 @@
+## 3.2.11
+- Improve documentation for CLI parameters
+- Add an error message when trying to use `--tsconfig` parameter with no value
+
 ## 3.2.10
 - Fix file watching that would work only once on some OS
 - CLI arguments are passed using the '=' instead of ':' (the colon still work for retro compatibility)

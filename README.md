@@ -64,6 +64,33 @@ Running `npm run test` will run the first file that exists in the following list
 - `/test/test.js`
 - `/test/main.js`
 
+
+### CLI parameters syntax
+
+There are two kinds of parameters that you can pass to the esrun cli:
+
+1. **esrun parameters**, that will impact how to execute your Typescript file,
+2. and **program parameters**, that will be passed into **process.argv** to the file you want to execute.
+
+**esrun parameters** follow the same syntax convention as node, ie:
+
+- it must start with a double hyphen "--"
+- then be followed by the name of the parameter
+- then, if a value is necessary, use an equal symbol "=" followed by the value, without space.
+
+Example:
+
+```
+esrun --tsconfig=/path/to/tsconfig.json myFileToExecute.ts
+```
+
+All parameters that come **after** the file to execute are **program parameters** and will be sent via `process.argv`.
+
+In this example, `"foo"` and `"bar"` will be sent to `myFileToExecute`:
+
+```
+esrun myFileToExecute.ts foo bar
+```
 ### Custom tsconfig.json
 
 You can pass a custom path to your `tsconfig.json` file from the CLI:
@@ -71,6 +98,12 @@ You can pass a custom path to your `tsconfig.json` file from the CLI:
 ```
 esrun --tsconfig=/custom/path/to/tsconfig.json foo.ts
 ```
+
+### Top-level await
+
+**Esrun** is compatible with top-level await.
+
+To enable top-level await, you need to set the option `"module": "esnext"` in your tsconfig.json.
 
 ### Watch mode
 

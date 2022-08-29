@@ -111,6 +111,7 @@ export default class Runner {
 			this.outputCode = this.buildOutput?.outputFiles[0]?.text || ""
 			this.dependencies = this.retrieveDependencies()
 		} catch (error) {
+			// No need to log the error as it has already been done by esbuild.
 			this.buildOutput = null
 			this.outputCode = ""
 		}

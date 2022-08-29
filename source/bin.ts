@@ -50,15 +50,20 @@ while ((argument = argv[argsOffset]).startsWith('--')) {
 	}
 }
 
+if (typeof options.tsconfig == "boolean") {
+	console.log("Missing value for the '--tsconfig' parameter. Did you forget to add a \"=\"?")
+	console.log("Example of valid syntax: esrun --tsconfig=/path/to/my/tsconfig.json fileToExecute.ts")
+	process.exit(9)
+}
+
+const tsConfigFile = options.tsconfig instanceof Array
+	? options.tsconfig.join(",")
+	: options.tsconfig
+
 esrun(argv[argsOffset], {
 	args: argv.slice(argsOffset + 1),
 	watch: options.watch,
-	tsConfigFile:
-		options.tsconfig instanceof Array
-			? options.tsconfig.join(",")
-			: typeof options.tsconfig == "boolean"
-			? undefined
-			: options.tsconfig,
+	tsConfigFile,
 	inspect: !!options.inspect,
 	preserveConsole: !!options.preserveConsole,
 	fileConstants: !options.noFileConstants,
