@@ -57,6 +57,20 @@ start(async ({ stage, same, test }) => {
 		)
 	}
 
+	stage("Temporary file mode")
+	{
+		const runner = new Runner("test/samples/fileConstants", {
+			sendCodeMode: "temporaryFile"
+		})
+		await runner.build()
+		test(
+			runner.outputCode.includes(
+				`["/Users/Lepzulnag/Code/esrun/test/samples", "/Users/Lepzulnag/Code/esrun/test/samples/fileConstants.ts", "__dirname", "__filename"]`
+			),
+			"__filename and __dirname are transformed in temporary file mode"
+		)
+	}
+
 	stage("Use transformer")
 	{
 		const runner = new Runner("test/samples/coco")

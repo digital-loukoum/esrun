@@ -4,7 +4,11 @@ import { ChildProcess, spawn } from "child_process"
 import findInputFile from "../tools/findInputFile.js"
 import { Options } from "../types/Options.js"
 import { fileConstantsPlugin } from "../plugins/fileConstants.js"
-import path from "path"
+import path, { resolve } from "path"
+import { SendCodeMode } from "../types/SendCodeMode.js"
+import cuid from "cuid"
+import { unlinkSync, writeFileSync } from "fs"
+import { findBinDirectory } from "../tools/findBinDirectory.js"
 
 export type BuildOutput =
 	| null
@@ -14,6 +18,7 @@ export type BuildOutput =
 
 export default class Runner {
 	public inputFile: string
+	public outputFile: undefined | string = undefined // temporary output file
 	public output = ""
 	public stdout = ""
 	public stderr = ""
@@ -25,6 +30,7 @@ export default class Runner {
 	public beforeRun: Options["beforeRun"]
 	public afterRun: Options["afterRun"]
 	public nodeOptions: Options["nodeOptions"] = {}
+	public sendCodeMode: SendCodeMode
 
 	protected watched: boolean | string[]
 	protected inspect: boolean
@@ -61,6 +67,10 @@ export default class Runner {
 		this.beforeRun = options?.beforeRun
 		this.afterRun = options?.afterRun
 		this.nodeOptions = options?.nodeOptions ?? {}
+		this.sendCodeMode =
+			options?.sendCodeMode ?? process.platform == "win32"
+				? "temporaryFile"
+				: "cliParameters"
 	}
 
 	async run() {
@@ -143,11 +153,30 @@ export default class Runner {
 			code = `setTimeout(() => console.log("Process timeout"), 3_600_000);\n` + code
 		}
 
-		code = `process.argv = [process.argv[0], ...process.argv.slice(3)];\n` + code
+		const evalArgs: Array<string> = []
+
+		if (this.sendCodeMode == "temporaryFile") {
+			// we create a temporary file that we will execute
+			this.outputFile = resolve(findBinDirectory(), `esrun-${cuid()}.tmp.mjs`)
+			code = code
+				.replace(
+					/(?:^|;)import (.*?) from "..\//gm,
+					'import $1 from "../../../'
+				)
+				.replace(
+					/(?:^|;)import (.*?) from ".\//gm,
+					'import $1 from "../../'
+				)
+			code = `process.argv = [process.argv[0], ...process.argv.slice(3)];\n` + code
+			writeFileSync(this.outputFile, code)
+			evalArgs.push(this.outputFile)
+		} else {
+			// we pass the code directly from the command line
+			evalArgs.push("--input-type=module", "--eval", code)
+		}
 
 		commandArgs.push(
-			"--input-type=module",
-			"-",
+			...evalArgs,
 			"--",
 			this.inputFile,
 			...this.args
@@ -157,12 +186,8 @@ export default class Runner {
 			this.childProcess = spawn("node", commandArgs, {
 				stdio: this.interProcessCommunication
 					? ["pipe", "pipe", "pipe", "ipc"]
-					: ["pipe", "inherit", "inherit"],
+					: "inherit",
 			})
-			
-			// send the code to execute to the child process
-			this.childProcess.stdin?.write(code);
-			this.childProcess.stdin?.end();
 
 			if (this.interProcessCommunication) {
 				this.childProcess?.on("message", message => {
@@ -179,6 +204,9 @@ export default class Runner {
 			return new Promise(resolve => {
 				const done = async (code?: number) => {
 					await this.afterRun?.()
+					if (this.outputFile) {
+						unlinkSync(this.outputFile)
+					}
 					resolve(code ?? 0)
 				}
 

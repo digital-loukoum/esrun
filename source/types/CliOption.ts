@@ -4,3 +4,4 @@ export type CliOption =
 	| "preserveConsole"
 	| "noFileConstants"
 	| "tsconfig"
+	| "sendCodeMode"

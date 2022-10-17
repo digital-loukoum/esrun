@@ -1,4 +1,5 @@
 import { Parameter } from "./Parameter.js"
+import { SendCodeMode } from "./SendCodeMode.js"
 
 export type Options = {
 	args?: string[]
@@ -10,6 +11,7 @@ export type Options = {
 	exitAfterExecution?: boolean
 	fileConstants?: boolean
 	tsConfigFile?: string
+	sendCodeMode?: SendCodeMode
 	beforeRun?: () => unknown
 	afterRun?: () => unknown
 	nodeOptions?: Record<string, Parameter>
