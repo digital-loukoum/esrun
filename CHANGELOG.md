@@ -1,3 +1,10 @@
+## 3.2.13
+- Fix a bug on temporary file mode if node_modules folder does not exist
+
+## 3.2.12
+- Fix usage with interactive CLI
+- On windows, the default mode creates a temporary flie that is then executed
+
 ## 3.2.11
 - Improve documentation for CLI parameters
 - Add an error message when trying to use `--tsconfig` parameter with no value

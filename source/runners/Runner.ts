@@ -157,16 +157,19 @@ export default class Runner {
 
 		if (this.sendCodeMode == "temporaryFile") {
 			// we create a temporary file that we will execute
-			this.outputFile = resolve(findBinDirectory(), `esrun-${cuid()}.tmp.mjs`)
-			code = code
-				.replace(
-					/(?:^|;)import (.*?) from "..\//gm,
-					'import $1 from "../../../'
-				)
-				.replace(
-					/(?:^|;)import (.*?) from ".\//gm,
-					'import $1 from "../../'
-				)
+			const binDirectory  = findBinDirectory()
+			this.outputFile = resolve(binDirectory, `esrun-${cuid()}.tmp.mjs`)
+			if (binDirectory && binDirectory != ".") {
+				code = code
+					.replace(
+						/(?:^|;)import (.*?) from "..\//gm,
+						'import $1 from "../../../'
+					)
+					.replace(
+						/(?:^|;)import (.*?) from ".\//gm,
+						'import $1 from "../../'
+					)
+			}
 			code = `process.argv = [process.argv[0], ...process.argv.slice(3)];\n` + code
 			writeFileSync(this.outputFile, code)
 			evalArgs.push(this.outputFile)
