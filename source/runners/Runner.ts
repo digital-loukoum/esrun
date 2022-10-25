@@ -9,6 +9,7 @@ import { SendCodeMode } from "../types/SendCodeMode.js"
 import cuid from "cuid"
 import { unlinkSync, writeFileSync } from "fs"
 import { findBinDirectory } from "../tools/findBinDirectory.js"
+import { importRequire } from "../tools/importRequire.js"
 
 export type BuildOutput =
 	| null
@@ -170,10 +171,12 @@ export default class Runner {
 						'import $1 from "../../'
 					)
 			}
+			code = importRequire(code, this.outputFile)
 			code = `process.argv = [process.argv[0], ...process.argv.slice(3)];\n` + code
 			writeFileSync(this.outputFile, code)
 			evalArgs.push(this.outputFile)
 		} else {
+			code = importRequire(code, resolve("index.js"))
 			// we pass the code directly from the command line
 			evalArgs.push("--input-type=module", "--eval", code)
 		}

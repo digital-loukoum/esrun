@@ -1,3 +1,7 @@
+## 3.2.14
+- Fix a rare bug where esbuild would need a require function. Use `createRequire()` from node to emulate the require function
+- Remove unused dependecny on cuid (is a dev dependency only)
+
 ## 3.2.13
 - Fix a bug on temporary file mode if node_modules folder does not exist
 
