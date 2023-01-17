@@ -1,11 +1,10 @@
 #!/usr/bin/env node
-import esrun from "./index.js"
-import { CliOption } from "./types/CliOption.js"
-import { Parameter } from "./types/Parameter.js"
-import { SendCodeMode } from "./types/SendCodeMode.js"
+import esrun from "./index.js";
+import { CliOption } from "./types/CliOption.js";
+import { Parameter } from "./types/Parameter.js";
 
-const { argv } = process
-const nodeOptionPrefix = "--node-"
+const { argv } = process;
+const nodeOptionPrefix = "--node-";
 
 const argumentOptions: Record<string, CliOption> = {
 	"--watch": "watch",
@@ -16,10 +15,10 @@ const argumentOptions: Record<string, CliOption> = {
 	"--noFileConstants": "noFileConstants",
 	"--tsconfig": "tsconfig",
 	"--send-code-mode": "sendCodeMode",
-}
+};
 
 const options: Record<CliOption, boolean | string[] | undefined> & {
-	node: Record<string, Parameter>
+	node: Record<string, Parameter>;
 } = {
 	watch: false,
 	inspect: false,
@@ -28,43 +27,45 @@ const options: Record<CliOption, boolean | string[] | undefined> & {
 	tsconfig: undefined,
 	node: {},
 	sendCodeMode: undefined,
-}
+};
 
-let argsOffset = 2
-let argument: string
+let argsOffset = 2;
+let argument: string;
 
 if (argv.length < argsOffset) {
-	console.log("Missing typescript input file")
-	process.exit(0)
+	console.log("Missing typescript input file");
+	process.exit(0);
 }
 
 while ((argument = argv[argsOffset]).startsWith("--")) {
-	const [command, parameters] = getCommandAndParameters(argument)
+	const [command, parameters] = getCommandAndParameters(argument);
 
 	if (command in argumentOptions) {
-		options[argumentOptions[command]] = parameters
-		argsOffset++
+		options[argumentOptions[command]] = parameters;
+		argsOffset++;
 	} else if (command.startsWith(nodeOptionPrefix)) {
-		options.node[command.slice(nodeOptionPrefix.length)] = parameters
-		argsOffset++
+		options.node[command.slice(nodeOptionPrefix.length)] = parameters;
+		argsOffset++;
 	} else {
-		console.log(`Unknown option ${command}`)
-		process.exit(9)
+		console.log(`Unknown option ${command}`);
+		process.exit(9);
 	}
 }
 
-if (typeof options.tsconfig == "boolean") {
+if (typeof options.tsconfig === "boolean") {
 	console.log(
-		"Missing value for the '--tsconfig' parameter. Did you forget to add a \"=\"?"
-	)
+		"Missing value for the '--tsconfig' parameter. Did you forget to add a \"=\"?",
+	);
 	console.log(
-		"Example of valid syntax: esrun --tsconfig=/path/to/my/tsconfig.json fileToExecute.ts"
-	)
-	process.exit(9)
+		"Example of valid syntax: esrun --tsconfig=/path/to/my/tsconfig.json fileToExecute.ts",
+	);
+	process.exit(9);
 }
 
 const tsConfigFile =
-	options.tsconfig instanceof Array ? options.tsconfig.join(",") : options.tsconfig
+	options.tsconfig instanceof Array
+		? options.tsconfig.join(",")
+		: options.tsconfig;
 
 esrun(argv[argsOffset], {
 	args: argv.slice(argsOffset + 1),
@@ -76,26 +77,26 @@ esrun(argv[argsOffset], {
 	nodeOptions: options.node,
 	sendCodeMode: !Array.isArray(options.sendCodeMode)
 		? undefined
-		: options.sendCodeMode[0] == "cliParameters"
+		: options.sendCodeMode[0] === "cliParameters"
 		? "cliParameters"
-		: options.sendCodeMode[0] == "temporaryFile"
+		: options.sendCodeMode[0] === "temporaryFile"
 		? "temporaryFile"
 		: undefined,
-}).catch(error => {
-	console.error(error)
-	process.exit(1)
-})
+}).catch((error) => {
+	console.error(error);
+	process.exit(1);
+});
 
 function getCommandAndParameters(argument: string): [string, Parameter] {
-	let colonIndex = argument.indexOf(":")
-	if (colonIndex == -1) colonIndex = Infinity
-	let equalIndex = argument.indexOf("=")
-	if (equalIndex == -1) equalIndex = Infinity
-	const separatorIndex = Math.min(colonIndex, equalIndex)
+	let colonIndex = argument.indexOf(":");
+	if (colonIndex === -1) colonIndex = Infinity;
+	let equalIndex = argument.indexOf("=");
+	if (equalIndex === -1) equalIndex = Infinity;
+	const separatorIndex = Math.min(colonIndex, equalIndex);
 
-	if (separatorIndex == Infinity) return [argument, true]
+	if (separatorIndex === Infinity) return [argument, true];
 	return [
 		argument.slice(0, separatorIndex),
 		argument.slice(separatorIndex + 1).split(","),
-	]
+	];
 }

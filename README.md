@@ -212,33 +212,40 @@ export async function esrun(filePath: string, options?: Options): Promise<void>
 
 export type Options = {
    // arguments to pass to the script
-	args?: string[] = []
+   args?: string[] = []
 
    // if true, will reload the script on file changes
    // you can also pass an additional array of globs to watch
-	watch?: boolean | string[] = false
+   watch?: boolean | string[] = false
 
    // if true, prevent console clearing on watch mode
-	preserveConsole?: boolean
+   preserveConsole?: boolean
 
    // if true, turn on inspect mode to use browser's console
    inspect?: boolean = false
 
    // if false, do not transform __dirname and __filename
    // (the CLI option to disable file constants is --noFileConstants)
-	fileConstants?: boolean = true
+   fileConstants?: boolean = true
 
    // if false, external packages will be bundled
-	makeAllPackagesExternal?: boolean = true
+   makeAllPackagesExternal?: boolean = true
 
    // if false, process.exit() won't be called after execution
-	exitAfterExecution?: boolean = true
+   exitAfterExecution?: boolean = true
 
    // enable use of process.send() from the children
-	interProcessCommunication?: boolean = false
+   interProcessCommunication?: boolean = false
 
    // additional options to pass to node's cli
-	nodeOptions?: Record<string, Parameter> = {}
+   nodeOptions?: Record<string, Parameter> = {}
+
+   // indicate the mode to use to run code
+   // "cliParameters" means the code is passed to the node program
+   // as parameters
+   // "temporaryFile" means a temporary file is created inside
+   // the node_modules folder, then executed, then deleted
+   sendCodeMode?: "cliParameters" | "temporaryFile"
 
    // executed before the code is executed (after the build)
    beforeRun?: () => unknown
