@@ -2,7 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@digitak/bunker': ^3.2.1
-  '@digitak/grubber': ^3.1.3
+  '@digitak/grubber': ^3.1.4
   '@types/node': ^14.14.20
   chokidar: ^3.5.1
   cuid: ^2.1.8
@@ -14,7 +14,7 @@ specifiers:
   typescript: ^4.7.0-dev.20220421
 
 dependencies:
-  '@digitak/grubber': 3.1.3
+  '@digitak/grubber': 3.1.4
   chokidar: 3.5.3
   cuid: 2.1.8
   esbuild: 0.14.47
@@ -39,8 +39,8 @@ packages:
     resolution: {integrity: sha512-mALnXJkunj0wqSP2bXt4ghPWx73dWsLjfdOWXwIMaCbvdVhSZYQX05ZhrQgxPR7R7CcSI555mbo7bq9GP5lhOw==}
     dev: true
 
-  /@digitak/grubber/3.1.3:
-    resolution: {integrity: sha512-7PV6XCS5qC28oaEKWUUXLxiewoj3Z0EfdCdxX5D6Vy5wtC/rYuCO15XOOupUcnwBaNR+Xm/bfmsCe1KJtEfE7g==}
+  /@digitak/grubber/3.1.4:
+    resolution: {integrity: sha512-pqsnp2BUYlDoTXWG34HWgEJse/Eo1okRgNex8IG84wHrJp8h3SakeR5WhB4VxSA2+/D+frNYJ0ch3yXzsfNDoA==}
     dev: false
 
   /@polka/url/0.5.0:

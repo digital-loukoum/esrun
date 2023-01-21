@@ -1,3 +1,9 @@
+## 3.2.17
+- Use latest grubber version that fixes comments with backticks
+
+## 3.2.16
+- Fix Windows bug when running esrun from a npm script
+
 ## 3.2.15
 - Re-add used dependency on cuid
 
