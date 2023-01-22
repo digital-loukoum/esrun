@@ -1,4 +1,4 @@
-import { build, BuildOptions, Plugin } from "esbuild";
+import { BuildOptions, Plugin, context, type BuildContext } from "esbuild";
 import type { BuildResult, OutputFile } from "esbuild";
 import { ChildProcess, spawn } from "child_process";
 import findInputFile from "../tools/findInputFile.js";
@@ -39,7 +39,8 @@ export default class Runner {
 	protected makeAllPackagesExternal;
 	protected exitAfterExecution;
 
-	protected buildOutput: BuildOutput = null;
+	protected buildContext?: BuildContext;
+	protected buildOutput?: BuildResult<BuildOptions>;
 	protected dependencies: string[] = [];
 	protected childProcess?: ChildProcess;
 
@@ -90,41 +91,29 @@ export default class Runner {
 
 	async build(buildOptions?: BuildOptions) {
 		const plugins: Plugin[] = [];
-		const external = [];
 
 		if (this.fileConstants) {
 			plugins.push(fileConstantsPlugin());
 		}
-		if (this.makeAllPackagesExternal) {
-			external.push(
-				"./node_modules/*",
-				"../node_modules/*",
-				"../../node_modules/*",
-				"../../../node_modules/*",
-				"../../../../node_modules/*",
-				"../../../../../node_modules/*",
-			);
-		}
-
 		try {
-			this.buildOutput = await build({
+			this.buildContext = await context({
 				entryPoints: [this.inputFile],
 				bundle: true,
 				platform: "node",
 				format: "esm",
-				incremental: !!this.watched,
 				plugins,
 				tsconfig: this.tsConfigFile,
-				external,
+				packages: this.makeAllPackagesExternal ? "external" : undefined,
 				...(buildOptions ?? {}),
 				write: false,
 				metafile: true,
 			});
-			this.outputCode = this.buildOutput?.outputFiles[0]?.text || "";
+			this.buildOutput = await this.buildContext?.rebuild();
+			this.outputCode = this.getOutputCode();
 			this.dependencies = this.retrieveDependencies();
 		} catch (error) {
 			// No need to log the error as it has already been done by esbuild.
-			this.buildOutput = null;
+			this.buildOutput = undefined;
 			this.outputCode = "";
 		}
 	}
@@ -219,5 +208,9 @@ export default class Runner {
 			console.error(error);
 			return 1;
 		}
+	}
+
+	getOutputCode() {
+		return this.buildOutput?.outputFiles?.[0]?.text || "";
 	}
 }

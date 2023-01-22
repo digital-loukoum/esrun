@@ -3,12 +3,20 @@
 		"moduleResolution": "NodeNext",
 		"skipLibCheck": true,
 		"target": "es2020",
-		"lib": ["es2020", "dom"],
+		"lib": [
+			"es2020",
+			"dom"
+		],
 		"module": "esnext",
 		"strict": true,
 		"declaration": true,
 		"esModuleInterop": true,
 		"outDir": "package",
 	},
-	"include": ["source"]
+	"include": [
+		"source"
+	],
+	"exclude": [
+		"test"
+	]
 }

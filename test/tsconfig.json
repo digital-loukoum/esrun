@@ -1,11 +1,15 @@
 {
 	"compilerOptions": {
 		"esModuleInterop": true,
-		"moduleResolution": "Node16",
 		"module": "esnext",
+		"moduleResolution": "Node",
 		"paths": {
-			"~/*": ["./*"],
-			"alias/*": ["./resolvedAlias/*"],
+			"~/*": [
+				"./*"
+			],
+			"alias/*": [
+				"./resolvedAlias/*"
+			],
 		}
-	}
+	},
 }

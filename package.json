@@ -16,7 +16,7 @@
 		"build": "node scripts/build.js",
 		"deploy": "node scripts/deploy.js",
 		"dev": "./package/bin.js --watch test --watch coco",
-		"test": "./package/bin.js test --watch coco",
+		"test": "./package/bin.js --tsconfig=./test/tsconfig.json test --watch coco",
 		"test:tsconfig": "./package/bin.js --tsconfig test/tsconfig.json test --watch coco",
 		"test:node-cli": "./package/bin.js --node-max-old-space-size=4096 test --watch coco",
 		"test:readline": "./package/bin.js test/readline",
@@ -49,7 +49,7 @@
 		"@digitak/grubber": "^3.1.4",
 		"chokidar": "^3.5.1",
 		"cuid": "^2.1.8",
-		"esbuild": "^0.14.47"
+		"esbuild": "^0.17.4"
 	},
 	"devDependencies": {
 		"@digitak/bunker": "^3.2.1",

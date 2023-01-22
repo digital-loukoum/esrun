@@ -60,11 +60,11 @@ export default class Watcher extends Runner {
 
 		if (this.buildOutput) {
 			try {
-				this.buildOutput = (await this.buildOutput.rebuild!()) as BuildOutput;
-				this.outputCode = this.buildOutput?.outputFiles[0]?.text || "";
+				this.buildOutput = await this.buildContext?.rebuild();
+				this.outputCode = this.getOutputCode();
 				this.dependencies = this.retrieveDependencies();
 			} catch (error) {
-				this.buildOutput = null;
+				this.buildOutput = undefined;
 				this.outputCode = "";
 			}
 		} else {
