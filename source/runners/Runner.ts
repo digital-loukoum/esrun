@@ -103,7 +103,21 @@ export default class Runner {
 				format: "esm",
 				plugins,
 				tsconfig: this.tsConfigFile,
-				packages: this.makeAllPackagesExternal ? "external" : undefined,
+				external: this.makeAllPackagesExternal
+					? [
+							"./node_modules/*",
+							"../node_modules/*",
+							"../../node_modules/*",
+							"../../../node_modules/*",
+							"../../../../node_modules/*",
+							"../../../../../node_modules/*",
+							"../../../../../../node_modules/*",
+							"../../../../../../../node_modules/*",
+							"../../../../../../../../node_modules/*",
+							"../../../../../../../../../node_modules/*",
+							"../../../../../../../../../../node_modules/*",
+					  ]
+					: [],
 				...(buildOptions ?? {}),
 				write: false,
 				metafile: true,
