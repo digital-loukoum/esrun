@@ -1,3 +1,6 @@
+## 3.2.18
+- Update esbuild version from `0.14` to `0.17`
+
 ## 3.2.17
 - Use latest grubber version that fixes comments with backticks
 
