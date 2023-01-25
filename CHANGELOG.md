@@ -1,3 +1,6 @@
+## 3.2.19
+- Add sudo mode
+
 ## 3.2.18
 - Update esbuild version from `0.14` to `0.17`
 

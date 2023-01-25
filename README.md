@@ -162,6 +162,13 @@ In case of troubleshooting, read the [node documentation](https://nodejs.org/en/
 
 > Inspect and watch mode are alas not compatible yet.
 
+### Sudo mode
+
+You can run the script in sudo mode:
+
+```
+esrun --sudo myScript.ts
+```
 
 ### Other node cli options
 

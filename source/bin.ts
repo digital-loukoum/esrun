@@ -15,6 +15,7 @@ const argumentOptions: Record<string, CliOption> = {
 	"--noFileConstants": "noFileConstants",
 	"--tsconfig": "tsconfig",
 	"--send-code-mode": "sendCodeMode",
+	"--sudo": "sudo",
 };
 
 const options: Record<CliOption, boolean | string[] | undefined> & {
@@ -24,6 +25,7 @@ const options: Record<CliOption, boolean | string[] | undefined> & {
 	inspect: false,
 	preserveConsole: false,
 	noFileConstants: false,
+	sudo: false,
 	tsconfig: undefined,
 	node: {},
 	sendCodeMode: undefined,

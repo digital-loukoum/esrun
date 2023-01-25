@@ -5,3 +5,4 @@ export type CliOption =
 	| "noFileConstants"
 	| "tsconfig"
 	| "sendCodeMode"
+	| "sudo";

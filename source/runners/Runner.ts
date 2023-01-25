@@ -32,6 +32,7 @@ export default class Runner {
 	public afterRun: Options["afterRun"];
 	public nodeOptions: Options["nodeOptions"] = {};
 	public sendCodeMode: SendCodeMode;
+	public sudo: boolean;
 
 	protected watched: boolean | string[];
 	protected inspect: boolean;
@@ -58,6 +59,7 @@ export default class Runner {
 		this.inputFile = findInputFile(inputFile);
 
 		this.args = options?.args ?? [];
+		this.sudo = options?.sudo ?? false;
 		this.watched = options?.watch ?? false;
 		this.preserveConsole = options?.preserveConsole ?? false;
 		this.inspect = options?.inspect ?? false;
@@ -139,9 +141,9 @@ export default class Runner {
 	async execute(): Promise<number> {
 		this.output = this.stdout = this.stderr = "";
 		if (!this.buildOutput) return 1;
-		await this.beforeRun?.();
-		let code = this.outputCode;
 
+		let code = this.outputCode;
+		let command = "node";
 		let commandArgs: string[] = [];
 
 		for (const nodeOption in this.nodeOptions) {
@@ -184,8 +186,15 @@ export default class Runner {
 
 		commandArgs.push(...evalArgs, "--", this.inputFile, ...this.args);
 
+		if (this.sudo) {
+			commandArgs = [command, ...commandArgs];
+			command = "sudo";
+		}
+
+		await this.beforeRun?.();
+
 		try {
-			this.childProcess = spawn("node", commandArgs, {
+			this.childProcess = spawn(command, commandArgs, {
 				stdio: this.interProcessCommunication
 					? ["pipe", "pipe", "pipe", "ipc"]
 					: "inherit",
