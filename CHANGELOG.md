@@ -1,3 +1,6 @@
+## 3.2.20
+- Fix temporary file creation for windows and old node versions
+
 ## 3.2.19
 - Add sudo mode
 

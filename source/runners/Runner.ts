@@ -4,7 +4,7 @@ import { ChildProcess, spawn } from "child_process";
 import findInputFile from "../tools/findInputFile.js";
 import { Options } from "../types/Options.js";
 import { fileConstantsPlugin } from "../plugins/fileConstants.js";
-import { posix } from "path";
+import path, { posix } from "path";
 import { SendCodeMode } from "../types/SendCodeMode.js";
 import cuid from "cuid";
 import { unlinkSync, writeFileSync } from "fs";
@@ -165,7 +165,9 @@ export default class Runner {
 		if (this.sendCodeMode === "temporaryFile") {
 			// we create a temporary file that we will execute
 			const binDirectory = findBinDirectory();
-			this.outputFile = posix.resolve(binDirectory, `esrun-${cuid()}.tmp.mjs`);
+			this.outputFile = path.normalize(
+				posix.join(binDirectory, `esrun-${cuid()}.tmp.mjs`),
+			);
 			if (binDirectory && binDirectory !== ".") {
 				code = code
 					.replace(
