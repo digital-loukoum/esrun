@@ -6,7 +6,7 @@ import { Options } from "../types/Options.js";
 import { fileConstantsPlugin } from "../plugins/fileConstants.js";
 import path, { posix } from "path";
 import { SendCodeMode } from "../types/SendCodeMode.js";
-import cuid from "cuid";
+import {createId} from "@paralleldrive/cuid2";
 import { unlinkSync, writeFileSync } from "fs";
 import { findBinDirectory } from "../tools/findBinDirectory.js";
 import { importRequire } from "../tools/importRequire.js";
@@ -166,7 +166,7 @@ export default class Runner {
 			// we create a temporary file that we will execute
 			const binDirectory = findBinDirectory();
 			this.outputFile = path.normalize(
-				posix.join(binDirectory, `esrun-${cuid()}.tmp.mjs`),
+				posix.join(binDirectory, `esrun-${createId()}.tmp.mjs`),
 			);
 			if (binDirectory && binDirectory !== ".") {
 				code = code

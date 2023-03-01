@@ -47,8 +47,8 @@
 	"homepage": "https://github.com/digital-loukoum/esrun#readme",
 	"dependencies": {
 		"@digitak/grubber": "^3.1.4",
+		"@paralleldrive/cuid2": "^2.2.0",
 		"chokidar": "^3.5.1",
-		"cuid": "^2.1.8",
 		"esbuild": "^0.17.4"
 	},
 	"devDependencies": {
