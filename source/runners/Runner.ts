@@ -6,7 +6,6 @@ import { Options } from "../types/Options.js";
 import { fileConstantsPlugin } from "../plugins/fileConstants.js";
 import path, { posix } from "path";
 import { SendCodeMode } from "../types/SendCodeMode.js";
-import cuid from "cuid";
 import { unlinkSync, writeFileSync } from "fs";
 import { findBinDirectory } from "../tools/findBinDirectory.js";
 import { importRequire } from "../tools/importRequire.js";
@@ -104,6 +103,8 @@ export default class Runner {
 				platform: "node",
 				format: "esm",
 				plugins,
+				sourcemap: "inline",
+				sourceRoot: process.cwd(),
 				tsconfig: this.tsConfigFile,
 				external: this.makeAllPackagesExternal
 					? [
@@ -144,7 +145,7 @@ export default class Runner {
 
 		let code = this.outputCode;
 		let command = "node";
-		let commandArgs: string[] = [];
+		let commandArgs: string[] = ["--enable-source-maps"];
 
 		for (const nodeOption in this.nodeOptions) {
 			let argument = `--${nodeOption}`;
@@ -165,8 +166,9 @@ export default class Runner {
 		if (this.sendCodeMode === "temporaryFile") {
 			// we create a temporary file that we will execute
 			const binDirectory = findBinDirectory();
+			const uniqueId = crypto.randomUUID();
 			this.outputFile = path.normalize(
-				posix.join(binDirectory, `esrun-${cuid()}.tmp.mjs`),
+				posix.join(binDirectory, `esrun-${uniqueId}.tmp.mjs`),
 			);
 			if (binDirectory && binDirectory !== ".") {
 				code = code

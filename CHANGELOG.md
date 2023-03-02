@@ -1,3 +1,7 @@
+## 3.2.21
+- Use crypto.getRandomUUID() and remove deprecated cuid dependency
+- Generate source maps for better debugging
+
 ## 3.2.20
 - Fix temporary file creation for windows and old node versions
 
