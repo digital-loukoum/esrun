@@ -1,3 +1,6 @@
+## 3.2.22
+- Don't use crypto anymore (not compatible for old node versions), use timestamp instead
+
 ## 3.2.21
 - Use crypto.getRandomUUID() and remove deprecated cuid dependency
 - Generate source maps for better debugging

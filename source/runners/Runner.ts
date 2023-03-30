@@ -166,7 +166,7 @@ export default class Runner {
 		if (this.sendCodeMode === "temporaryFile") {
 			// we create a temporary file that we will execute
 			const binDirectory = findBinDirectory();
-			const uniqueId = crypto.randomUUID();
+			const uniqueId = Date.now();
 			this.outputFile = path.normalize(
 				posix.join(binDirectory, `esrun-${uniqueId}.tmp.mjs`),
 			);
