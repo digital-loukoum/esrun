@@ -1,3 +1,6 @@
+## 3.2.23
+- Strip shebangs
+
 ## 3.2.22
 - Don't use crypto anymore (not compatible for old node versions), use timestamp instead
 

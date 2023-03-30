@@ -9,6 +9,7 @@ import { SendCodeMode } from "../types/SendCodeMode.js";
 import { unlinkSync, writeFileSync } from "fs";
 import { findBinDirectory } from "../tools/findBinDirectory.js";
 import { importRequire } from "../tools/importRequire.js";
+import { grub } from "@digitak/grubber";
 
 export type BuildOutput =
 	| null
@@ -127,6 +128,12 @@ export default class Runner {
 			});
 			this.buildOutput = await this.buildContext?.rebuild();
 			this.outputCode = this.getOutputCode();
+
+			// remove shebangs
+			this.outputCode = grub(this.outputCode).replace(
+				{ from: /^#!.*$/gm, to: "" },
+			)
+			
 			this.dependencies = this.retrieveDependencies();
 		} catch (error) {
 			// No need to log the error as it has already been done by esbuild.
