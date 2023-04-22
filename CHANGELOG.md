@@ -1,3 +1,6 @@
+## 3.2.24
+- Add `esuilbOptions` to the `esrun` function.
+
 ## 3.2.23
 - Strip shebangs
 

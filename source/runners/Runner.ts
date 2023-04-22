@@ -33,6 +33,7 @@ export default class Runner {
 	public nodeOptions: Options["nodeOptions"] = {};
 	public sendCodeMode: SendCodeMode;
 	public sudo: boolean;
+	public esbuildOptions: BuildOptions;
 
 	protected watched: boolean | string[];
 	protected inspect: boolean;
@@ -72,6 +73,8 @@ export default class Runner {
 		this.beforeRun = options?.beforeRun;
 		this.afterRun = options?.afterRun;
 		this.nodeOptions = options?.nodeOptions ?? {};
+		this.nodeOptions = options?.nodeOptions ?? {};
+		this.esbuildOptions = options?.esbuildOptions ?? {};
 		this.sendCodeMode =
 			options?.sendCodeMode ?? process.platform === "win32"
 				? "temporaryFile"
@@ -91,7 +94,7 @@ export default class Runner {
 		}
 	}
 
-	async build(buildOptions?: BuildOptions) {
+	async build(buildOptions: BuildOptions = {}) {
 		const plugins: Plugin[] = [];
 
 		if (this.fileConstants) {
@@ -122,7 +125,8 @@ export default class Runner {
 							"../../../../../../../../../../node_modules/*",
 					  ]
 					: [],
-				...(buildOptions ?? {}),
+				...this.esbuildOptions,
+				...buildOptions,
 				write: false,
 				metafile: true,
 			});

@@ -1,3 +1,4 @@
+import { BuildOptions } from "esbuild";
 import { Parameter } from "./Parameter.js";
 import { SendCodeMode } from "./SendCodeMode.js";
 
@@ -16,4 +17,5 @@ export type Options = {
 	beforeRun?: () => unknown;
 	afterRun?: () => unknown;
 	nodeOptions?: Record<string, Parameter>;
+	esbuildOptions?: BuildOptions;
 };
