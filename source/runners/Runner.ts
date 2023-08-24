@@ -7,7 +7,6 @@ import { fileConstantsPlugin } from "../plugins/fileConstants.js";
 import path, { posix } from "path";
 import { SendCodeMode } from "../types/SendCodeMode.js";
 import { unlinkSync, writeFileSync } from "fs";
-import { findBinDirectory } from "../tools/findBinDirectory.js";
 import { importRequire } from "../tools/importRequire.js";
 import { grub } from "@digitak/grubber";
 
@@ -176,7 +175,6 @@ export default class Runner {
 
 		if (this.sendCodeMode === "temporaryFile") {
 			// we create a temporary file that we will execute
-			const binDirectory = findBinDirectory();
 			const uniqueId = Date.now();
 			this.outputFile = path.join(process.cwd(), `esrun-${uniqueId}.tmp.mjs`);
 			code = importRequire(code, this.outputFile);
