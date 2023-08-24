@@ -178,17 +178,7 @@ export default class Runner {
 			// we create a temporary file that we will execute
 			const binDirectory = findBinDirectory();
 			const uniqueId = Date.now();
-			this.outputFile = path.normalize(
-				posix.join(binDirectory, `esrun-${uniqueId}.tmp.mjs`),
-			);
-			if (binDirectory && binDirectory !== ".") {
-				code = code
-					.replace(
-						/(?:^|;)import (.*?) from "..\//gm,
-						'import $1 from "../../../',
-					)
-					.replace(/(?:^|;)import (.*?) from ".\//gm, 'import $1 from "../../');
-			}
+			this.outputFile = path.join(process.cwd(), `esrun-${uniqueId}.tmp.mjs`);
 			code = importRequire(code, this.outputFile);
 			code = `process.argv = [process.argv[0], ...process.argv.slice(3)];\n${code}`;
 			writeFileSync(this.outputFile, code);
