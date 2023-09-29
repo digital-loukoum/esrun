@@ -1,3 +1,7 @@
+## 3.2.25
+- Fix `url` import that would conflict with user-defined url variables.
+
+
 ## 3.2.24
 - Add `esuilbOptions` to the `esrun` function.
 

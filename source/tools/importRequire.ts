@@ -1,9 +1,9 @@
 export function importRequire(code: string, location: string) {
 	// return `import { createRequire } from "module";\nconst require = createRequire("${location}");\n` + code
 	return `
-		import url from 'url';\n
-		import { createRequire } from "module";\n
-		const fileUrl = url.pathToFileURL("${location}");\n
-		const require = createRequire(fileUrl);\n${code}
-	`;
+		import __esrun_url from 'url';\n
+		import { createRequire as __esrun_createRequire } from "module";\n
+		const __esrun_fileUrl = __esrun_url.pathToFileURL("${location}");\n
+		const require = __esrun_createRequire(__esrun_fileUrl);\n${code}
+	`
 }
