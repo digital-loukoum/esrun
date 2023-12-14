@@ -1,3 +1,5 @@
+> **This package has been moved to [esrun](https://www.npmjs.com/package/esrun). This is a legacy version.**
+
 # esrun
 **esrun** is a "work out of the box" library to execute Typescript (as well as modern Javascript with decorators and stuff) without having to use a bundler. This is useful for quick demonstrations or when launching your tests written in Typescript.
 
@@ -15,7 +17,7 @@ Install the library globally with your favorite package manager:
 
 
 ```shell
-npm i -g @digitak/esrun
+npm i -g esrun
 ```
 
 Then you can execute any Typescript file in the same way Node would execute a Javascript file:
@@ -40,7 +42,7 @@ External module dependencies won't be bundled, it's up to the `node` engine to r
 Install the library locally with your favorite package manager.
 
 ```shell
-npm i -D @digitak/esrun
+npm i -D esrun
 ```
 
 Then you can use it in your `package.json` scripts:
@@ -213,7 +215,7 @@ If the given entry point is a directory, the following actions will be executed 
 The library exports a single function that you can use to programmatically execute a Typescript file.
 
 ``` ts
-import esrun from '@digitak/esrun'
+import esrun from 'esrun'
 
 export async function esrun(filePath: string, options?: Options): Promise<void>
 
@@ -267,7 +269,7 @@ export type Options = {
 To have full control, you can create your own script runner instance:
 
 ```ts
-import { Runner } from '@digitak/esrun'
+import { Runner } from 'esrun'
 
 const runner = new Runner(inputFile: string, options?: Options)
 
