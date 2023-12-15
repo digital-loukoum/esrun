@@ -1,5 +1,3 @@
-> **This package has been moved to [esrun](https://www.npmjs.com/package/esrun). This is a legacy version.**
-
 # esrun
 **esrun** is a "work out of the box" library to execute Typescript (as well as modern Javascript with decorators and stuff) without having to use a bundler. This is useful for quick demonstrations or when launching your tests written in Typescript.
 

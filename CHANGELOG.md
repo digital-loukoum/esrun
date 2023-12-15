@@ -1,3 +1,6 @@
+## 3.2.27
+- Move from `@digitak/esrun` to `esrun`.
+
 ## 3.2.25
 - Fix `url` import that would conflict with user-defined url variables.
 
