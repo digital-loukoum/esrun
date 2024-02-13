@@ -7,7 +7,6 @@ import { fileConstantsPlugin } from "../plugins/fileConstants.js";
 import path, { posix } from "path";
 import { SendCodeMode } from "../types/SendCodeMode.js";
 import { unlinkSync, writeFileSync } from "fs";
-import { findBinDirectory } from "../tools/findBinDirectory.js";
 import { importRequire } from "../tools/importRequire.js";
 import { grub } from "@digitak/grubber";
 
@@ -176,19 +175,8 @@ export default class Runner {
 
 		if (this.sendCodeMode === "temporaryFile") {
 			// we create a temporary file that we will execute
-			const binDirectory = findBinDirectory();
 			const uniqueId = Date.now();
-			this.outputFile = path.normalize(
-				posix.join(binDirectory, `esrun-${uniqueId}.tmp.mjs`),
-			);
-			if (binDirectory && binDirectory !== ".") {
-				code = code
-					.replace(
-						/(?:^|;)import (.*?) from "..\//gm,
-						'import $1 from "../../../',
-					)
-					.replace(/(?:^|;)import (.*?) from ".\//gm, 'import $1 from "../../');
-			}
+			this.outputFile = path.join(process.cwd(), `esrun-${uniqueId}.tmp.mjs`);
 			code = importRequire(code, this.outputFile);
 			code = `process.argv = [process.argv[0], ...process.argv.slice(3)];\n${code}`;
 			writeFileSync(this.outputFile, code);
