@@ -3,9 +3,7 @@
 
 This library is a thin wrapper around [esbuild](https://github.com/evanw/esbuild) which compiles Typescript almost instantly.
 
-The harder work to run typescript is to deal with dependencies. For example, you may need to import other Typescript files, but also libraries written in Javascript and using either the CJS or the ESM format. All these use cases should be considered.
-
-**esrun** is able to handle all the annoying stuff and make things work as you would expect.
+**esrun** properly handles dependencies, handling importing both Typescript and Javascript libraries, and using either the CJS or the ESM format. Things just work as you would expect.
 
 ## Usage
 
